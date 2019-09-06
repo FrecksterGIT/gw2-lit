@@ -1,14 +1,14 @@
-import {LitElement, html, customElement, property, css} from "lit-element";
-import {connect} from "pwa-helpers/connect-mixin";
+import {css, customElement, html, LitElement, property} from 'lit-element';
+import {connect} from 'pwa-helpers/connect-mixin';
 
-import {store} from "../store/store";
+import {store} from '../store/store';
 import './objective';
 
 @customElement('gw2-map')
 export class Gw2Map extends connect(store)(LitElement) {
-    @property({type: Number}) mapId: Number;
-    @property({type: String}) type: String;
-    @property({type: Array}) objectives: Array<Number> = [];
+    @property({type: Number}) public mapId: number;
+    @property({type: String}) public type: string;
+    @property({type: Array}) public objectives: number[] = [];
 
     public static get MAP_SIZES() {
         return {
@@ -52,26 +52,26 @@ export class Gw2Map extends connect(store)(LitElement) {
         ];
     }
 
-    stateChanged(state) {
+    public stateChanged(state) {
         if (state.match.matchData) {
-            const map = state.match.matchData.maps.find(map => map.id === this.mapId);
+            const map = state.match.matchData.maps.find((m) => m.id === this.mapId);
             this.type = map.type;
             this.objectives = map.objectives
-                .filter(objective => (
+                .filter((objective) => (
                     objective.type !== 'Spawn'
                     && objective.type !== 'Ruins'
                     && objective.type !== 'Mercenary'
                 ))
-                .map(objective => objective.id);
+                .map((objective) => objective.id);
         }
     }
 
-    renderObjective(objId) {
+    public renderObjective(objId) {
         return html`<gw2-objective objectiveId=${objId}></gw2-objective>`;
     }
 
-    render() {
-        const objectives = this.objectives.map(objective => this.renderObjective(objective));
+    public render() {
+        const objectives = this.objectives.map((objective) => this.renderObjective(objective));
 
         return html`${objectives}`;
     }

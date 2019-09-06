@@ -1,19 +1,11 @@
-import {customElement, LitElement, html, property, css} from "lit-element";
-import {connect} from "pwa-helpers/connect-mixin";
-import {store} from "../store/store";
+import {css, customElement, html, LitElement, property} from 'lit-element';
+import {connect} from 'pwa-helpers/connect-mixin';
+
+import {CLAIM, logChange} from '../store/actions/logger';
+import {store} from '../store/store';
 
 @customElement('gw2-info')
 export class Gw2Info extends connect(store)(LitElement) {
-    @property() objectiveId;
-    @property() objectiveData;
-
-    @property({type: String}) lastFlipped: string;
-    @property({type: String}) claimedBy: string;
-    @property({type: String}) claimedAt: string;
-    @property({type: Number}) pointsTick: number;
-    @property({type: Number}) pointsCapture: number;
-    @property({type: Number}) yaksDelivered: number;
-    @property({type: Array}) guildUpgrades: Array<number> = [];
 
     static get styles() {
         return [
@@ -32,7 +24,18 @@ export class Gw2Info extends connect(store)(LitElement) {
         ];
     }
 
-    stateChanged(state) {
+    @property() public objectiveId;
+    @property() public objectiveData;
+
+    @property({type: String}) public lastFlipped: string;
+    @property({type: String}) public claimedBy: string;
+    @property({type: String}) public claimedAt: string;
+    @property({type: Number}) public pointsTick: number;
+    @property({type: Number}) public pointsCapture: number;
+    @property({type: Number}) public yaksDelivered: number;
+    @property({type: Array}) public guildUpgrades: number[] = [];
+
+    public stateChanged(state) {
         if (state.match.matchData) {
             const objective = this.getObjective(state);
 
@@ -49,27 +52,18 @@ export class Gw2Info extends connect(store)(LitElement) {
         }
     }
 
-    getObjective(state) {
+    public getObjective(state) {
         return state.match.matchData.maps.reduce((objective, map) => {
-            if (objective) return objective;
-            return map.objectives.reduce((found, objective) => {
-                return objective.id === this.objectiveId ? objective : found;
+            if (objective) {
+                return objective;
+            }
+            return map.objectives.reduce((found, obj) => {
+                return obj.id === this.objectiveId ? obj : found;
             }, null);
         }, null);
     }
 
-    private updateGuildUpgrades(objUpgrades) {
-        if (!objUpgrades && this.guildUpgrades) {
-            this.guildUpgrades = [];
-        }
-        objUpgrades.forEach(objUpgrade => {
-            if (!this.guildUpgrades.find(upgrade => objUpgrade === upgrade)) {
-                this.guildUpgrades.push(objUpgrade);
-            }
-        });
-    }
-
-    renderDataEntries() {
+    public renderDataEntries() {
         return [
             html`<dt>Turned</dt><dd>${this.lastFlipped}</dd>`,
             html`<dt>Guild</dt><dd>${this.claimedBy}</dd>`,
@@ -78,8 +72,31 @@ export class Gw2Info extends connect(store)(LitElement) {
         ];
     }
 
-    render() {
+    public render() {
         return html`<b>${this.objectiveData.name}</b>
         <dl>${this.renderDataEntries()}</dl>`;
+    }
+
+    protected updated(changedProperties: Map<PropertyKey, unknown>): void {
+        if (changedProperties.has('claimedBy') && this.claimedBy) {
+            store.dispatch(
+                logChange(
+                    CLAIM,
+                    this.objectiveData,
+                    changedProperties.get('claimedBy') as string,
+                    this.claimedBy, this.claimedAt
+                ));
+        }
+    }
+
+    private updateGuildUpgrades(objUpgrades) {
+        if (!objUpgrades && this.guildUpgrades) {
+            this.guildUpgrades = [];
+        }
+        objUpgrades.forEach((objUpgrade) => {
+            if (!this.guildUpgrades.find((upgrade) => objUpgrade === upgrade)) {
+                this.guildUpgrades.push(objUpgrade);
+            }
+        });
     }
 }

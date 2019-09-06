@@ -1,8 +1,8 @@
-import {FAILED, RECEIVED, REQUEST} from "../actions/objectives";
+import {FAILED, RECEIVED, REQUEST} from '../actions/objectives';
 
 const INITIAL_STATE = {
-    fetching: false,
-    data: []
+    data: [],
+    fetching: false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -15,17 +15,17 @@ export default (state = INITIAL_STATE, action) => {
         case RECEIVED:
             return {
                 ...state,
-                fetching: false,
                 data: action.data.reduce((obj, item) => {
                     obj[item.id] = item;
                     return obj;
-                }, {})
+                }, {}),
+                fetching: false
             };
         case FAILED:
             return {
                 ...state,
-                fetching: false,
-                error: action.error
+                error: action.error,
+                fetching: false
             };
         default:
             return state;

@@ -1,18 +1,15 @@
-import {html, customElement, LitElement, property, css, unsafeCSS} from "lit-element";
-import {connect} from "pwa-helpers/connect-mixin";
+import {css, customElement, html, LitElement, unsafeCSS} from 'lit-element';
+import {connect} from 'pwa-helpers/connect-mixin';
 
-import {store} from "../store/store";
-import {fetchUpdate} from "../store/actions/match";
-import {fetchObjectives} from "../store/actions/objectives";
+import {fetchUpdate} from '../store/actions/match';
+import {fetchObjectives} from '../store/actions/objectives';
+import {store} from '../store/store';
 
 import * as background from '../../assets/images/world.jpg';
 import './map';
 
-
 @customElement('gw2-world')
 export class World extends connect(store)(LitElement) {
-
-    @property() fetching: boolean = false;
 
     static get styles() {
         return [css`
@@ -28,19 +25,15 @@ export class World extends connect(store)(LitElement) {
             }`];
     }
 
-    protected firstUpdated(_changedProperties: Map<PropertyKey, unknown>): void {
-        store.dispatch<any>(fetchUpdate('2-1'));
+    public render() {
+        return html`<gw2-map mapId="38"></gw2-map><gw2-map mapId="1099"></gw2-map><gw2-map mapId="96"></gw2-map><gw2-map mapId="95"></gw2-map>`;
+    }
+
+    protected firstUpdated(changedProperties: Map<PropertyKey, unknown>): void {
+        store.dispatch<any>(fetchUpdate('2-4'));
         store.dispatch<any>(fetchObjectives());
         setInterval(() => {
-            store.dispatch<any>(fetchUpdate('2-1'));
+            store.dispatch<any>(fetchUpdate('2-4'));
         }, 5000);
-    }
-
-    stateChanged(state) {
-        this.fetching = state.match.fetching;
-    }
-
-    render() {
-        return html`<gw2-map mapId="38"></gw2-map><gw2-map mapId="1099"></gw2-map><gw2-map mapId="96"></gw2-map><gw2-map mapId="95"></gw2-map>`;
     }
 }

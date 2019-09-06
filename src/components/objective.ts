@@ -1,24 +1,19 @@
-import {html, customElement, LitElement, property, css, unsafeCSS} from "lit-element";
-import {connect} from "pwa-helpers/connect-mixin";
+import {css, customElement, html, LitElement, property, unsafeCSS} from 'lit-element';
+import {connect} from 'pwa-helpers/connect-mixin';
 
-import {store} from "../store/store";
-import {Gw2Map} from "./map";
+import {logChange, OWNER} from '../store/actions/logger';
+import {store} from '../store/store';
+
 import './info';
+import {Gw2Map} from './map';
 
 import * as campIcon from '../../assets/images/gw2_wvw_map-vector--camp_transparent.svg';
-import * as towerIcon from '../../assets/images/gw2_wvw_map-vector--tower_transparent.svg';
-import * as keepIcon from '../../assets/images/gw2_wvw_map-vector--keep_transparent.svg';
 import * as castleIcon from '../../assets/images/gw2_wvw_map-vector--castle_transparent.svg';
+import * as keepIcon from '../../assets/images/gw2_wvw_map-vector--keep_transparent.svg';
+import * as towerIcon from '../../assets/images/gw2_wvw_map-vector--tower_transparent.svg';
 
 @customElement('gw2-objective')
 export class Gw2Objective extends connect(store)(LitElement) {
-
-    @property({type: String}) objectiveId: string;
-
-    @property() objectiveData;
-    @property() coords;
-    @property({type: String}) type: string;
-    @property({type: String}) owner: string;
 
     static get styles() {
         return [
@@ -72,12 +67,21 @@ export class Gw2Objective extends connect(store)(LitElement) {
         ];
     }
 
-    stateChanged(state) {
+    @property({type: String}) public objectiveId: string;
+
+    @property() public objectiveData;
+    @property() public coords;
+    @property({type: String}) public type: string;
+    @property({type: String}) public owner: string;
+    @property({type: String}) public lastFlipped: string;
+
+    public stateChanged(state) {
         if (state.match.matchData) {
             const objective = this.getObjective(state);
 
             this.type = objective.type;
             this.owner = objective.owner;
+            this.lastFlipped = objective.last_flipped;
         }
         if (state.objectives.data && state.objectives.data[this.objectiveId]) {
             this.objectiveData = state.objectives.data[this.objectiveId];
@@ -85,13 +89,38 @@ export class Gw2Objective extends connect(store)(LitElement) {
         }
     }
 
-    getObjective(state) {
+    public getObjective(state) {
         return state.match.matchData.maps.reduce((objective, map) => {
-            if (objective) return objective;
-            return map.objectives.reduce((found, objective) => {
-                return objective.id === this.objectiveId ? objective : found;
+            if (objective) {
+                return objective;
+            }
+            return map.objectives.reduce((found, obj) => {
+                return obj.id === this.objectiveId ? obj : found;
             }, null);
         }, null);
+    }
+
+    public render() {
+        const iconClass = this.type ? this.type.toLowerCase() : '';
+        const ownerClass = this.owner ? this.owner.toLowerCase() : '';
+
+        return html`<div class="objective ${ownerClass}" style="left: ${this.coords[0]}%; top: ${this.coords[1]}%">
+            <div class="icon ${iconClass}"></div>
+            <gw2-info class="info" objectiveId=${this.objectiveId}></gw2-info>
+        </div>`;
+    }
+
+    protected updated(changedProperties: Map<PropertyKey, unknown>): void {
+        if (changedProperties.has('owner')) {
+            store.dispatch(
+                logChange(
+                    OWNER,
+                    this.objectiveData,
+                    changedProperties.get('owner') as string,
+                    this.owner,
+                    this.lastFlipped
+                ));
+        }
     }
 
     private calculateCoords() {
@@ -111,15 +140,5 @@ export class Gw2Objective extends connect(store)(LitElement) {
                 coord[1] / mapSize[1] * 100
             ];
         }
-    }
-
-    render() {
-        const iconClass = this.type ? this.type.toLowerCase() : '';
-        const ownerClass = this.owner ? this.owner.toLowerCase() : '';
-
-        return html`<div class="objective ${ownerClass}" style="left: ${this.coords[0]}%; top: ${this.coords[1]}%">
-            <div class="icon ${iconClass}"></div>
-            <gw2-info class="info" objectiveId=${this.objectiveId}></gw2-info>
-        </div>`;
     }
 }

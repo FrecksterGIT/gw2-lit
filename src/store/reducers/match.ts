@@ -1,4 +1,4 @@
-import {FAILED_UPDATE, RECEIVED_UPDATE, REQUEST_UPDATE} from "../actions/match";
+import {FAILED_UPDATE, RECEIVED_UPDATE, REQUEST_UPDATE} from '../actions/match';
 
 const INITIAL_STATE = {};
 
@@ -18,8 +18,8 @@ export default (state = INITIAL_STATE, action) => {
         case FAILED_UPDATE:
             return {
                 ...state,
-                fetching: false,
-                error: action.error
+                error: action.error,
+                fetching: false
             };
         default:
             return state;

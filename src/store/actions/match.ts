@@ -1,64 +1,64 @@
 import fetch from 'cross-fetch';
-import {ThunkAction, ThunkDispatch} from "redux-thunk";
+import {ThunkAction, ThunkDispatch} from 'redux-thunk';
 
 export const REQUEST_UPDATE = 'REQUEST_UPDATE';
 export const RECEIVED_UPDATE = 'RECEIVED_UPDATE';
 export const FAILED_UPDATE = 'FAILED_UPDATE';
 
-export type MatchState = {
-    matchId: String,
-    fetching?: boolean,
-    matchData?: any,
-};
+export interface IMatchState {
+    fetching?: boolean;
+    matchData?: any;
+    matchId: string;
+}
 
 interface IRequestAction {
-    type: 'REQUEST_UPDATE',
-    matchId: String
+    matchId: string;
+    type: 'REQUEST_UPDATE';
 }
 
 interface IReceivedAction {
-    type: 'RECEIVED_UPDATE',
-    matchId: String,
-    matchData: any
+    matchData: any;
+    matchId: string;
+    type: 'RECEIVED_UPDATE';
 }
 
 interface IFailedAction {
-    type: 'FAILED_UPDATE',
-    matchId: String,
-    error: any
+    error: any;
+    matchId: string;
+    type: 'FAILED_UPDATE';
 }
 
 export type MatchActions = IRequestAction | IReceivedAction | IFailedAction;
 
 const requestUpdate = (matchId): IRequestAction => {
     return {
-        type: REQUEST_UPDATE,
-        matchId
-    };
-};
-
-const receivedUpdate = (matchId, json): IReceivedAction => {
-    return {
-        type: RECEIVED_UPDATE,
         matchId,
-        matchData: json
+        type: REQUEST_UPDATE
     };
 };
 
-const failedUpdate = (matchId, error): IFailedAction => {
+const receivedUpdate = (matchId: string, json: any): IReceivedAction => {
     return {
-        type: FAILED_UPDATE,
+        matchData: json,
         matchId,
-        error
+        type: RECEIVED_UPDATE
     };
 };
 
-export const fetchUpdate = (matchId: String): ThunkAction<Promise<any>, MatchState, null, null> => {
-    return async (dispatch: ThunkDispatch<MatchState, undefined, any>) => {
+const failedUpdate = (matchId: string, error: any): IFailedAction => {
+    return {
+        error,
+        matchId,
+        type: FAILED_UPDATE
+    };
+};
+
+export const fetchUpdate = (matchId: string): ThunkAction<Promise<any>, IMatchState, null, null> => {
+    return async (dispatch: ThunkDispatch<IMatchState, undefined, any>) => {
         dispatch(requestUpdate(matchId));
 
         return fetch('https://api.guildwars2.com/v2/wvw/matches/' + matchId)
-            .then(response => response.json(), error => dispatch(failedUpdate(matchId, error)))
-            .then(json => dispatch(receivedUpdate(matchId, json)));
+            .then((response) => response.json(), (error) => dispatch(failedUpdate(matchId, error)))
+            .then((json) => dispatch(receivedUpdate(matchId, json)));
     };
 };
