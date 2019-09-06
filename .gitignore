@@ -63,3 +63,4 @@ typings/
 # intellij
 .idea
 *.iml
+/package-lock.json
