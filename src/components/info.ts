@@ -68,7 +68,7 @@ export class Gw2Info extends connect(store)(LitElement) {
             html`<dt>Turned</dt><dd>${this.lastFlipped}</dd>`,
             html`<dt>Guild</dt><dd>${this.claimedBy}</dd>`,
             html`<dt>Claimed</dt><dd>${this.claimedAt}</dd>`,
-            html`<dt>Dolyaks</dt><dd>${this.yaksDelivered}</dd>`,
+            html`<dt>Dolyaks</dt><dd>${this.yaksDelivered}</dd>`
         ];
     }
 
