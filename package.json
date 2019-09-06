@@ -8,6 +8,7 @@
   "author": "Sven Müller <sven.mueller@breathless-code.de>",
   "license": "ISC",
   "devDependencies": {
+    "file-loader": "^4.2.0",
     "lit-element": "^2.2.1",
     "ts-loader": "^6.0.4",
     "typescript": "^3.6.2",

@@ -1,20 +1,23 @@
-import {html, customElement, LitElement, property, css} from "lit-element";
+import {html, customElement, LitElement, property, css, unsafeCSS} from "lit-element";
 import {connect} from "pwa-helpers/connect-mixin";
 
 import {store} from "../store/store";
-import './map';
 import {fetchUpdate} from "../store/actions/match";
 import {fetchObjectives} from "../store/actions/objectives";
 
+import * as background from '../../assets/images/world.jpg';
+import './map';
+
+
 @customElement('gw2-world')
- export class World extends connect(store)(LitElement) {
+export class World extends connect(store)(LitElement) {
 
     @property() fetching: boolean = false;
 
     static get styles() {
         return [css`
             :host {
-                background: url(world.jpg) center center no-repeat;
+                background: url(${unsafeCSS(background)}) center center no-repeat;
                 background-size: contain;
                 display: block;
                 height: 0;

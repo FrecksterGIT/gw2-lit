@@ -14,6 +14,12 @@ module.exports = {
                 options: {
                     configFile: 'tsconfig.json'
                 }
+            },
+            {
+                test: /\.(png|svg|jpg|gif)$/,
+                use: [
+                    'file-loader'
+                ]
             }
         ]
     },

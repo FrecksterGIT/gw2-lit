@@ -1,19 +1,24 @@
-import {html, customElement, LitElement, property, css} from "lit-element";
+import {html, customElement, LitElement, property, css, unsafeCSS} from "lit-element";
 import {connect} from "pwa-helpers/connect-mixin";
 
 import {store} from "../store/store";
-import './map';
 import {Gw2Map} from "./map";
 
+import * as campIcon from '../../assets/images/gw2_wvw_map-vector--camp_transparent.svg';
+import * as towerIcon from '../../assets/images/gw2_wvw_map-vector--tower_transparent.svg';
+import * as keepIcon from '../../assets/images/gw2_wvw_map-vector--keep_transparent.svg';
+import * as castleIcon from '../../assets/images/gw2_wvw_map-vector--castle_transparent.svg';
+
 @customElement('gw2-objective')
- export class Gw2Objective extends connect(store)(LitElement) {
+export class Gw2Objective extends connect(store)(LitElement) {
 
     @property({type: String}) objectiveId: string;
+
     @property() objectiveData;
     @property() coords;
-
     @property({type: String}) type: string;
     @property({type: String}) owner: string;
+
     @property({type: String}) lastFlipped: string;
     @property({type: String}) claimedBy: string;
     @property({type: String}) claimedAt: string;
@@ -25,11 +30,40 @@ import {Gw2Map} from "./map";
     static get styles() {
         return [
             css`:host .objective {
-                background: red;
+                background-color: #707070;
+                border-radius: 50%;
                 display: block;
                 height: 26px;
                 position: absolute;
                 width: 26px;
+            }`,
+            css`:host .camp {
+                background-image: url(${unsafeCSS(campIcon)});
+            }`,
+            css`:host .tower {
+                background-image: url(${unsafeCSS(towerIcon)});
+            }`,
+            css`:host .keep {
+                background-image: url(${unsafeCSS(keepIcon)});
+            }`,
+            css`:host .castle {
+                background-image: url(${unsafeCSS(castleIcon)});
+            }`,
+            css`:host .icon {
+                background-size: 28px 28px;
+                background-position: center center;
+                height: 26px;
+                position: absolute;
+                width: 26px;
+            }`,
+            css`:host .green {
+                background-image: radial-gradient(circle at 50%, #7DBE63, #1e7b2d 53%);
+            }`,
+            css`:host .blue {
+                background-image: radial-gradient(circle at 50%, #839AC0, #1a4da1 53%);
+            }`,
+            css`:host .red {
+                background-image: radial-gradient(circle at 50%, #BA7471, #b02822 53%);
             }`
         ];
     }
@@ -90,9 +124,11 @@ import {Gw2Map} from "./map";
     }
 
     render() {
-        const typeClass = this.type ? this.type.toLowerCase() : '';
+        const iconClass = this.type ? this.type.toLowerCase() : '';
+        const ownerClass = this.owner ? this.owner.toLowerCase() : '';
 
-        return html`<div class="objective ${typeClass}" style="left: ${this.coords[0]}%; top: ${this.coords[1]}%">
+        return html`<div class="objective ${ownerClass}" style="left: ${this.coords[0]}%; top: ${this.coords[1]}%">
+            <div class="icon ${iconClass}"></div>
             ${this.objectiveData.name}
         </div>`;
     }
