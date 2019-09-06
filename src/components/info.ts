@@ -27,9 +27,9 @@ export class Gw2Info extends connect(store)(LitElement) {
     @property() public objectiveId;
     @property() public objectiveData;
 
-    @property({type: String}) public lastFlipped: string;
+    @property({type: Date}) public lastFlipped: Date;
     @property({type: String}) public claimedBy: string;
-    @property({type: String}) public claimedAt: string;
+    @property({type: Date}) public claimedAt: Date;
     @property({type: Number}) public pointsTick: number;
     @property({type: Number}) public pointsCapture: number;
     @property({type: Number}) public yaksDelivered: number;
@@ -39,9 +39,9 @@ export class Gw2Info extends connect(store)(LitElement) {
         if (state.match.matchData) {
             const objective = this.getObjective(state);
 
-            this.lastFlipped = objective.last_flipped;
+            this.lastFlipped = new Date(objective.last_flipped);
             this.claimedBy = objective.claimed_by;
-            this.claimedAt = objective.claimed_at;
+            this.claimedAt = new Date(objective.claimed_at);
             this.pointsTick = objective.points_tick;
             this.pointsCapture = objective.points_capture;
             this.yaksDelivered = objective.yaks_delivered;
@@ -65,14 +65,14 @@ export class Gw2Info extends connect(store)(LitElement) {
 
     public renderDataEntries() {
         return [
-            html`<dt>Turned</dt><dd>${this.lastFlipped}</dd>`,
+            html`<dt>Turned</dt><dd>${this.lastFlipped.toLocaleTimeString()}</dd>`,
             html`<dt>Guild</dt><dd>${this.claimedBy}</dd>`,
-            html`<dt>Claimed</dt><dd>${this.claimedAt}</dd>`,
+            html`<dt>Claimed</dt><dd>${this.claimedAt.toLocaleTimeString()}</dd>`,
             html`<dt>Dolyaks</dt><dd>${this.yaksDelivered}</dd>`
         ];
     }
 
-    public render() {
+    protected render() {
         return html`<b>${this.objectiveData.name}</b>
         <dl>${this.renderDataEntries()}</dl>`;
     }
@@ -84,7 +84,7 @@ export class Gw2Info extends connect(store)(LitElement) {
                     CLAIM,
                     this.objectiveData,
                     changedProperties.get('claimedBy') as string,
-                    this.claimedBy, this.claimedAt
+                    this.claimedBy, this.claimedAt.toISOString()
                 ));
         }
     }

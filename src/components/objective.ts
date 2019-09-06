@@ -89,18 +89,7 @@ export class Gw2Objective extends connect(store)(LitElement) {
         }
     }
 
-    public getObjective(state) {
-        return state.match.matchData.maps.reduce((objective, map) => {
-            if (objective) {
-                return objective;
-            }
-            return map.objectives.reduce((found, obj) => {
-                return obj.id === this.objectiveId ? obj : found;
-            }, null);
-        }, null);
-    }
-
-    public render() {
+    protected render() {
         const iconClass = this.type ? this.type.toLowerCase() : '';
         const ownerClass = this.owner ? this.owner.toLowerCase() : '';
 
@@ -121,6 +110,17 @@ export class Gw2Objective extends connect(store)(LitElement) {
                     this.lastFlipped
                 ));
         }
+    }
+
+    private getObjective(state) {
+        return state.match.matchData.maps.reduce((objective, map) => {
+            if (objective) {
+                return objective;
+            }
+            return map.objectives.reduce((found, obj) => {
+                return obj.id === this.objectiveId ? obj : found;
+            }, null);
+        }, null);
     }
 
     private calculateCoords() {

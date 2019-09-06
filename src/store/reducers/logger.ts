@@ -19,11 +19,9 @@ export default (state = INITIAL_STATE, action) => {
         case CLAIM:
             const messages = state.messages;
             messages.push({
-                action: action.type,
-                newValue: action.newValue,
+                ...action,
                 objectiveId: action.objective.id,
                 objectiveName: action.objective.name,
-                oldValue: action.oldValue,
                 time: new Date(action.time)
             });
             messages.sort((a, b) => a.time < b.time ? 1 : -1);

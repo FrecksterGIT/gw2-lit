@@ -25,15 +25,15 @@ export class World extends connect(store)(LitElement) {
             }`];
     }
 
-    public render() {
-        return html`<gw2-map mapId="38"></gw2-map><gw2-map mapId="1099"></gw2-map><gw2-map mapId="96"></gw2-map><gw2-map mapId="95"></gw2-map>`;
-    }
-
     protected firstUpdated(changedProperties: Map<PropertyKey, unknown>): void {
         store.dispatch<any>(fetchUpdate('2-4'));
         store.dispatch<any>(fetchObjectives());
         setInterval(() => {
             store.dispatch<any>(fetchUpdate('2-4'));
         }, 5000);
+    }
+
+    protected render() {
+        return html`<gw2-map mapId="38"></gw2-map><gw2-map mapId="1099"></gw2-map><gw2-map mapId="96"></gw2-map><gw2-map mapId="95"></gw2-map>`;
     }
 }

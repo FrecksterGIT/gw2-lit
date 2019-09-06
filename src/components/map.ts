@@ -66,13 +66,13 @@ export class Gw2Map extends connect(store)(LitElement) {
         }
     }
 
-    public renderObjective(objId) {
-        return html`<gw2-objective objectiveId=${objId}></gw2-objective>`;
-    }
-
-    public render() {
+    protected render() {
         const objectives = this.objectives.map((objective) => this.renderObjective(objective));
 
         return html`${objectives}`;
+    }
+
+    private renderObjective(objId) {
+        return html`<gw2-objective objectiveId=${objId}></gw2-objective>`;
     }
 }
