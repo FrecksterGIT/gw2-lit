@@ -24,7 +24,6 @@ export class Gw2Map extends connect(store)(LitElement) {
             css`:host {
                 height: auto;
                 position: absolute;
-                overflow: hidden;
                 width: 29.5%;
             }`,
             css`:host:before {

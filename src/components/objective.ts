@@ -3,6 +3,7 @@ import {connect} from "pwa-helpers/connect-mixin";
 
 import {store} from "../store/store";
 import {Gw2Map} from "./map";
+import './info';
 
 import * as campIcon from '../../assets/images/gw2_wvw_map-vector--camp_transparent.svg';
 import * as towerIcon from '../../assets/images/gw2_wvw_map-vector--tower_transparent.svg';
@@ -19,14 +20,6 @@ export class Gw2Objective extends connect(store)(LitElement) {
     @property({type: String}) type: string;
     @property({type: String}) owner: string;
 
-    @property({type: String}) lastFlipped: string;
-    @property({type: String}) claimedBy: string;
-    @property({type: String}) claimedAt: string;
-    @property({type: Number}) pointsTick: number;
-    @property({type: Number}) pointsCapture: number;
-    @property({type: Number}) yaksDelivered: number;
-    @property({type: Array}) guildUpgrades: Array<number> = [];
-
     static get styles() {
         return [
             css`:host .objective {
@@ -35,7 +28,12 @@ export class Gw2Objective extends connect(store)(LitElement) {
                 display: block;
                 height: 26px;
                 position: absolute;
+                transform: translate(-13px, -13px);
                 width: 26px;
+                z-index: 1;
+            }`,
+            css`:host .objective:hover {
+                z-index: 2;
             }`,
             css`:host .camp {
                 background-image: url(${unsafeCSS(campIcon)});
@@ -64,33 +62,36 @@ export class Gw2Objective extends connect(store)(LitElement) {
             }`,
             css`:host .red {
                 background-image: radial-gradient(circle at 50%, #BA7471, #b02822 53%);
+            }`,
+            css`:host .info {
+                display: none;
+            }`,
+            css`:host .objective:hover .info {
+                display: block;
             }`
         ];
     }
 
     stateChanged(state) {
         if (state.match.matchData) {
-            const objective = state.match.matchData.maps.reduce((objective, map) => {
-                if (objective) return objective;
-                return map.objectives.reduce((found, objective) => {
-                    return objective.id === this.objectiveId ? objective : found;
-                }, null);
-            }, null);
+            const objective = this.getObjective(state);
 
             this.type = objective.type;
             this.owner = objective.owner;
-            this.lastFlipped = objective.last_flipped;
-            this.claimedBy = objective.claimed_by;
-            this.claimedAt = objective.claimed_at;
-            this.pointsTick = objective.points_tick;
-            this.pointsCapture = objective.points_capture;
-            this.yaksDelivered = objective.yaks_delivered;
-            this.updateGuildUpgrades(objective.guild_upgrades);
         }
         if (state.objectives.data && state.objectives.data[this.objectiveId]) {
             this.objectiveData = state.objectives.data[this.objectiveId];
             this.coords = this.calculateCoords();
         }
+    }
+
+    getObjective(state) {
+        return state.match.matchData.maps.reduce((objective, map) => {
+            if (objective) return objective;
+            return map.objectives.reduce((found, objective) => {
+                return objective.id === this.objectiveId ? objective : found;
+            }, null);
+        }, null);
     }
 
     private calculateCoords() {
@@ -112,24 +113,13 @@ export class Gw2Objective extends connect(store)(LitElement) {
         }
     }
 
-    private updateGuildUpgrades(objUpgrades) {
-        if (!objUpgrades && this.guildUpgrades) {
-            this.guildUpgrades = [];
-        }
-        objUpgrades.forEach(objUpgrade => {
-            if (!this.guildUpgrades.find(upgrade => objUpgrade === upgrade)) {
-                this.guildUpgrades.push(objUpgrade);
-            }
-        });
-    }
-
     render() {
         const iconClass = this.type ? this.type.toLowerCase() : '';
         const ownerClass = this.owner ? this.owner.toLowerCase() : '';
 
         return html`<div class="objective ${ownerClass}" style="left: ${this.coords[0]}%; top: ${this.coords[1]}%">
             <div class="icon ${iconClass}"></div>
-            ${this.objectiveData.name}
+            <gw2-info class="info" objectiveId=${this.objectiveId}></gw2-info>
         </div>`;
     }
 }
