@@ -1,0 +1,25 @@
+{
+  "name": "gw2-lit",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "webpack-dev-server --config webpack.dev.config.js",
+    "build-dev": "webpack --config webpack.dev.config.js"
+  },
+  "author": "Sven Müller <sven.mueller@breathless-code.de>",
+  "license": "ISC",
+  "devDependencies": {
+    "lit-element": "^2.2.1",
+    "ts-loader": "^6.0.4",
+    "typescript": "^3.6.2",
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.8",
+    "webpack-dev-server": "^3.8.0"
+  },
+  "dependencies": {
+    "cross-fetch": "^3.0.4",
+    "pwa-helpers": "^0.9.1",
+    "redux": "^4.0.4",
+    "redux-saga": "^1.0.5",
+    "redux-thunk": "^2.3.0"
+  }
+}
