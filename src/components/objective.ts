@@ -1,5 +1,5 @@
-import {css, customElement, html, LitElement, property, unsafeCSS} from 'lit-element';
-import {connect} from 'pwa-helpers/connect-mixin';
+import {css, customElement, html, property, unsafeCSS} from 'lit-element';
+import {BaseElement} from '../base';
 
 import {logChange, OWNER} from '../store/actions/logger';
 import {store} from '../store/store';
@@ -13,7 +13,7 @@ import * as keepIcon from '../../assets/images/gw2_wvw_map-vector--keep_transpar
 import * as towerIcon from '../../assets/images/gw2_wvw_map-vector--tower_transparent.svg';
 
 @customElement('gw2-objective')
-export class Gw2Objective extends connect(store)(LitElement) {
+export class Gw2Objective extends BaseElement {
 
     static get styles() {
         return [
@@ -76,6 +76,7 @@ export class Gw2Objective extends connect(store)(LitElement) {
     @property({type: String}) public lastFlipped: string;
 
     public stateChanged(state) {
+        super.stateChanged(state);
         if (state.match.matchData) {
             const objective = this.getObjective(state);
 
@@ -100,6 +101,7 @@ export class Gw2Objective extends connect(store)(LitElement) {
     }
 
     protected updated(changedProperties: Map<PropertyKey, unknown>): void {
+        super.updated(changedProperties);
         if (changedProperties.has('owner')) {
             store.dispatch(
                 logChange(

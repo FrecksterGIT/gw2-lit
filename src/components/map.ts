@@ -1,11 +1,10 @@
-import {css, customElement, html, LitElement, property} from 'lit-element';
-import {connect} from 'pwa-helpers/connect-mixin';
+import {css, customElement, html, property} from 'lit-element';
 
-import {store} from '../store/store';
+import {BaseElement} from '../base';
 import './objective';
 
 @customElement('gw2-map')
-export class Gw2Map extends connect(store)(LitElement) {
+export class Gw2Map extends BaseElement {
     @property({type: Number}) public mapId: number;
     @property({type: String}) public type: string;
     @property({type: Array}) public objectives: number[] = [];
@@ -53,6 +52,7 @@ export class Gw2Map extends connect(store)(LitElement) {
     }
 
     public stateChanged(state) {
+        super.stateChanged(state);
         if (state.match.matchData) {
             const map = state.match.matchData.maps.find((m) => m.id === this.mapId);
             this.type = map.type;

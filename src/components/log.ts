@@ -1,10 +1,9 @@
-import {css, customElement, html, LitElement, property} from 'lit-element';
-import {connect} from 'pwa-helpers/connect-mixin';
+import {css, customElement, html, property} from 'lit-element';
 
-import {store} from '../store/store';
+import {BaseElement} from '../base';
 
 @customElement('gw2-log')
-export class Gw2Info extends connect(store)(LitElement) {
+export class Gw2Info extends BaseElement {
     @property() private messages;
 
     public static get styles() {
@@ -20,6 +19,7 @@ export class Gw2Info extends connect(store)(LitElement) {
     }
 
     public stateChanged(state) {
+        super.stateChanged(state);
         if (state.logger.messages) {
             this.messages = state.logger.messages.slice(0, 20);
         }

@@ -10,6 +10,7 @@
   "devDependencies": {
     "cross-fetch": "^3.0.4",
     "file-loader": "^4.2.0",
+    "i18next": "^17.0.13",
     "lit-element": "^2.2.1",
     "pwa-helpers": "^0.9.1",
     "redux": "^4.0.4",
