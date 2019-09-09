@@ -44,8 +44,13 @@ export class Gw2Info extends BaseElement {
     private renderMessage(message) {
         switch (message.type) {
             case OWNER:
+                const newOwner = html`<span class="${message.newValue.toLowerCase()}">${message.newValue}</span>`;
+                const oldOwner = (message.oldValue)
+                    ? html` ${this.t('from')} <span class="${message.oldValue.toLowerCase()}">${message.oldValue}</span>`
+                    : html ``;
+
                 return html`<p>${this.formatDateRelativeToNow(message.time)}:
-                    ${message.objectiveName} ${message.oldValue} ${this.t('captured by')} <span class="${message.newValue.toLowerCase()}">${message.newValue}</span></p>`;
+                    ${message.objectiveName} ${message.oldValue} ${this.t('captured by')} ${newOwner}${oldOwner}</p>`;
             case CLAIM:
                 return html`<p>${this.formatDateRelativeToNow(message.time)}:
                     ${message.objectiveName} ${message.oldValue} ${this.t('claimed by')} <gw2-guild-name .guildId=${message.newValue} .color=${message.owner}></gw2-guild-name></p>`;
