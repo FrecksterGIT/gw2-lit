@@ -5,6 +5,8 @@ import {BaseElement} from './base';
 import {CLAIM, logChange} from '../store/actions/logger';
 import {store} from '../store/store';
 
+import './guild-name';
+
 @customElement('gw2-info')
 export class Gw2Info extends BaseElement {
 
@@ -29,6 +31,7 @@ export class Gw2Info extends BaseElement {
     @property() protected objectiveData;
 
     @property({type: Date}) protected lastFlipped: Date;
+    @property({type: String}) protected owner: string;
     @property({type: String}) protected claimedBy: string;
     @property({type: Date}) protected claimedAt: Date;
     @property({type: Number}) protected pointsTick: number;
@@ -42,6 +45,7 @@ export class Gw2Info extends BaseElement {
             const objective = this.getObjective(state);
 
             this.lastFlipped = new Date(objective.last_flipped);
+            this.owner = objective.owner;
             this.claimedBy = objective.claimed_by;
             this.claimedAt = new Date(objective.claimed_at);
             this.pointsTick = objective.points_tick;
@@ -68,7 +72,7 @@ export class Gw2Info extends BaseElement {
     public renderDataEntries() {
         return [
             html`<dt>${this.t('Turned')}</dt><dd>${this.lastFlipped.toLocaleTimeString()}</dd>`,
-            html`<dt>${this.t('Guild')}</dt><dd>${this.claimedBy}</dd>`,
+            html`<dt>${this.t('Guild')}</dt><dd><gw2-guild-name .guildId=${this.claimedBy}></gw2-guild-name></dd>`,
             html`<dt>${this.t('Claimed')}</dt><dd>${this.claimedAt.toLocaleTimeString()}</dd>`,
             html`<dt>${this.t('Dolyaks')}</dt><dd>${this.yaksDelivered}</dd>`
         ];
@@ -86,6 +90,7 @@ export class Gw2Info extends BaseElement {
                 logChange(
                     CLAIM,
                     this.objectiveData,
+                    this.owner,
                     changedProperties.get('claimedBy') as string,
                     this.claimedBy, this.claimedAt.toISOString()
                 ));

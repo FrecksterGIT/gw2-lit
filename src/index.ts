@@ -19,6 +19,13 @@ class WvW extends BaseElement {
         store.dispatch<any>(fetchMatches());
     }
 
+    protected updated(changedProperties: Map<PropertyKey, unknown>): void {
+        if (changedProperties.has('lng')) {
+            store.dispatch<any>(fetchObjectives(this.lng));
+            store.dispatch<any>(fetchWorlds(this.lng));
+        }
+    }
+
     protected render() {
         return html`
             <button @click=${() => store.dispatch(changeLanguage('de'))}>de</button>

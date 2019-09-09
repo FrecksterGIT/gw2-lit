@@ -1,14 +1,19 @@
 import fetch from 'cross-fetch';
 import {ThunkAction, ThunkDispatch} from 'redux-thunk';
 
+import {store} from '../store';
+
 export const REQUEST = 'REQUEST';
 export const RECEIVED = 'RECEIVED';
 export const FAILED = 'FAILED';
 
-type DataType = 'MATCHES' | 'OBJECTIVES' | 'WORLDS';
+type DataType = 'MATCHES' | 'OBJECTIVES' | 'WORLDS' | 'GUILDS';
 
 export interface IResourcesState {
-    data?: any;
+    GUILDS: [];
+    MATCHES: [];
+    OBJECTIVES: [];
+    WORLDS: [];
     fetching?: boolean;
 }
 
@@ -54,7 +59,7 @@ const failed = (error, dataType: DataType): IFailedAction => {
     };
 };
 
-const fetchData = (url, dataType: DataType)  => {
+const fetchData = (url, dataType: DataType) => {
     return async (dispatch: ThunkDispatch<IResourcesState, undefined, any>) => {
         dispatch(request(dataType));
 
@@ -64,14 +69,31 @@ const fetchData = (url, dataType: DataType)  => {
     };
 };
 
-export const fetchObjectives = (): ThunkAction<Promise<any>, IResourcesState, null, null> => {
-    return fetchData('https://api.guildwars2.com/v2/wvw/objectives?ids=all', 'OBJECTIVES');
+export const fetchObjectives = (lng = 'en'): ThunkAction<Promise<any>, IResourcesState, null, null> => {
+    return fetchData('https://api.guildwars2.com/v2/wvw/objectives?ids=all&lang=' + lng, 'OBJECTIVES');
 };
 
-export const fetchWorlds = (): ThunkAction<Promise<any>, IResourcesState, null, null> => {
-    return fetchData('https://api.guildwars2.com/v2/worlds?ids=all', 'WORLDS');
+export const fetchWorlds = (lng = 'en'): ThunkAction<Promise<any>, IResourcesState, null, null> => {
+    return fetchData('https://api.guildwars2.com/v2/worlds?ids=all&lang=' + lng, 'WORLDS');
 };
 
 export const fetchMatches = (): ThunkAction<Promise<any>, IResourcesState, null, null> => {
     return fetchData('https://api.guildwars2.com/v2/wvw/matches/overview?ids=all', 'MATCHES');
+};
+
+export const fetchGuild = (guildId): ThunkAction<Promise<any>, IResourcesState, null, null> => {
+    return async (dispatch: ThunkDispatch<IResourcesState, undefined, any>) => {
+        const dataType = 'GUILDS';
+
+        dispatch(request(dataType));
+
+        const state = store.getState();
+        if (!guildId || (state.resources.GUILDS && state.resources.GUILDS[guildId])) {
+            return Promise.resolve(dispatch(received(state.resources.GUILDS[guildId], dataType)));
+        }
+
+        return fetch('https://api.guildwars2.com//v2/guild/' + guildId)
+            .then((response) => response.json(), (error) => dispatch(failed(error, dataType)))
+            .then((json) => dispatch(received(json, dataType)));
+    };
 };

@@ -1,6 +1,7 @@
 import {FAILED, RECEIVED, REQUEST} from '../actions/resources';
 
 const INITIAL_STATE = {
+    GUILDS: [],
     MATCHES: [],
     OBJECTIVES: [],
     WORLDS: [],
@@ -15,11 +16,15 @@ export default (state = INITIAL_STATE, action) => {
                 fetching: true
             };
         case RECEIVED:
-            const receivedData = action.data.reduce((obj, item) => {
-                obj[item.id] = item;
-                return obj;
-            }, {});
-            state[action.dataType] = receivedData;
+            if (Array.isArray(action.data)) {
+                state[action.dataType] = action.data.reduce((obj, item) => {
+                    obj[item.id] = item;
+                    return obj;
+                }, {});
+            } else if (action.data && action.data.id) {
+                state[action.dataType][action.data.id] = action.data;
+                state[action.dataType] = Object.assign({}, state[action.dataType]);
+            }
             return {
                 ...state,
                 fetching: false

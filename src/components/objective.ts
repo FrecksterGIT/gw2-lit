@@ -107,6 +107,7 @@ export class Gw2Objective extends BaseElement {
                 logChange(
                     OWNER,
                     this.objectiveData,
+                    this.owner,
                     changedProperties.get('owner') as string,
                     this.owner,
                     this.lastFlipped

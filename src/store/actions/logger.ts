@@ -11,6 +11,7 @@ export interface ILoggerAction {
     newValue: string;
     objective: any;
     oldValue: string;
+    owner: string;
     time: string;
     type: LogType;
 }
@@ -18,6 +19,7 @@ export interface ILoggerAction {
 export const logChange = (
     type: LogType,
     objective: any,
+    owner: string,
     oldValue: string,
     newValue: string,
     time: string): ILoggerAction => {
@@ -25,6 +27,7 @@ export const logChange = (
         newValue,
         objective,
         oldValue,
+        owner,
         time,
         type
     };

@@ -3,6 +3,8 @@ import {CLAIM, OWNER} from '../store/actions/logger';
 
 import {BaseElement} from './base';
 
+import './guild-name';
+
 @customElement('gw2-log')
 export class Gw2Info extends BaseElement {
     @property() private messages;
@@ -15,6 +17,15 @@ export class Gw2Info extends BaseElement {
                 font: 11px/13px 'Open Sans', sans-serif, arial;
                 height: 120px;
                 overflow-y: scroll;
+            }`,
+            css`:host .red {
+                color: #b02822;
+            }`,
+            css`:host .blue {
+                color: #1a4da1;
+            }`,
+            css`:host .green {
+                color: #1e7b2d;
             }`
         ];
     }
@@ -34,10 +45,10 @@ export class Gw2Info extends BaseElement {
         switch (message.type) {
             case OWNER:
                 return html`<p>${this.formatDateRelativeToNow(message.time)}:
-                    ${message.objectiveName} ${message.oldValue} ${this.t('captured by')} ${message.newValue}</p>`;
+                    ${message.objectiveName} ${message.oldValue} ${this.t('captured by')} <span class="${message.newValue.toLowerCase()}">${message.newValue}</span></p>`;
             case CLAIM:
                 return html`<p>${this.formatDateRelativeToNow(message.time)}:
-                    ${message.objectiveName} ${message.oldValue} ${this.t('claimed by')} ${message.newValue}</p>`;
+                    ${message.objectiveName} ${message.oldValue} ${this.t('claimed by')} <gw2-guild-name .guildId=${message.newValue} .color=${message.owner}></gw2-guild-name></p>`;
         }
     }
 }
