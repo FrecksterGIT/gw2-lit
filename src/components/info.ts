@@ -1,6 +1,6 @@
 import {css, customElement, html, property} from 'lit-element';
 
-import {BaseElement} from '../base';
+import {BaseElement} from './base';
 
 import {CLAIM, logChange} from '../store/actions/logger';
 import {store} from '../store/store';
@@ -49,8 +49,8 @@ export class Gw2Info extends BaseElement {
             this.yaksDelivered = objective.yaks_delivered;
             this.updateGuildUpgrades(objective.guild_upgrades);
         }
-        if (state.objectives.data && state.objectives.data[this.objectiveId]) {
-            this.objectiveData = state.objectives.data[this.objectiveId];
+        if (state.resources.OBJECTIVES && state.resources.OBJECTIVES[this.objectiveId]) {
+            this.objectiveData = state.resources.OBJECTIVES[this.objectiveId];
         }
     }
 

@@ -1,4 +1,6 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 const dist = path.resolve(__dirname, 'dist');
 
 module.exports = {
@@ -30,6 +32,14 @@ module.exports = {
         filename: 'bundle.js',
         path: dist
     },
+    plugins: [
+        new HtmlWebpackPlugin({
+            filename: path.resolve(path.join(dist, 'index.html')),
+            template: `!!ejs-loader!${path.resolve('./src/index.html')}`,
+            inject: true,
+            compile: true,
+        }),
+    ],
     devServer: {
         contentBase: dist,
         compress: true,

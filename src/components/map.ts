@@ -1,6 +1,6 @@
 import {css, customElement, html, property} from 'lit-element';
 
-import {BaseElement} from '../base';
+import {BaseElement} from './base';
 import './objective';
 
 @customElement('gw2-map')

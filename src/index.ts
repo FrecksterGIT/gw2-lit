@@ -1,6 +1,6 @@
 import {customElement, html} from 'lit-element';
 
-import {BaseElement} from './base';
+import {BaseElement} from './components/base';
 
 import {changeLanguage} from './store/actions/i18n';
 import {store} from './store/store';

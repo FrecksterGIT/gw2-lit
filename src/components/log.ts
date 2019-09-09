@@ -1,6 +1,7 @@
 import {css, customElement, html, property} from 'lit-element';
+import {CLAIM, OWNER} from '../store/actions/logger';
 
-import {BaseElement} from '../base';
+import {BaseElement} from './base';
 
 @customElement('gw2-log')
 export class Gw2Info extends BaseElement {
@@ -21,7 +22,7 @@ export class Gw2Info extends BaseElement {
     public stateChanged(state) {
         super.stateChanged(state);
         if (state.logger.messages) {
-            this.messages = state.logger.messages.slice(0, 20);
+            this.messages = state.logger.messages.slice(0, 80);
         }
     }
 
@@ -30,6 +31,13 @@ export class Gw2Info extends BaseElement {
     }
 
     private renderMessage(message) {
-        return html`<p>${message.time.toLocaleTimeString()}: ${message.objectiveName}: ${message.oldValue} -> ${message.newValue}</p>`;
+        switch (message.type) {
+            case OWNER:
+                return html`<p>${this.formatDateRelativeToNow(message.time)}:
+                    ${message.objectiveName}: ${message.oldValue} ${this.t('captured by')} ${message.newValue}</p>`;
+            case CLAIM:
+                return html`<p>${this.formatDateRelativeToNow(message.time)}:
+                    ${message.objectiveName}: ${message.oldValue} ${this.t('claimed by')} ${message.newValue}</p>`;
+        }
     }
 }
