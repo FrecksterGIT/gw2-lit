@@ -28,9 +28,9 @@ export class World extends BaseElement {
 
     protected firstUpdated(changedProperties: Map<PropertyKey, unknown>): void {
         super.firstUpdated(changedProperties);
-        store.dispatch<any>(fetchUpdate('2-4'));
+        store.dispatch<any>(fetchUpdate('2-3'));
         setInterval(() => {
-            store.dispatch<any>(fetchUpdate('2-4'));
+            store.dispatch<any>(fetchUpdate('2-3'));
         }, 5000);
     }
 

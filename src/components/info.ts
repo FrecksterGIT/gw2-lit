@@ -27,17 +27,17 @@ export class Gw2Info extends BaseElement {
         ];
     }
 
-    @property() protected objectiveId;
-    @property() protected objectiveData;
+    @property({type: String}) private objectiveId: string;
+    @property({type: Date}) private lastFlipped: Date;
+    @property({type: String}) private owner: string;
+    @property({type: String}) private claimedBy: string;
+    @property({type: Date}) private claimedAt: Date;
+    @property({type: Number}) private pointsTick: number;
+    @property({type: Number}) private pointsCapture: number;
+    @property({type: Number}) private yaksDelivered: number;
+    @property({type: Array}) private guildUpgrades: number[] = [];
 
-    @property({type: Date}) protected lastFlipped: Date;
-    @property({type: String}) protected owner: string;
-    @property({type: String}) protected claimedBy: string;
-    @property({type: Date}) protected claimedAt: Date;
-    @property({type: Number}) protected pointsTick: number;
-    @property({type: Number}) protected pointsCapture: number;
-    @property({type: Number}) protected yaksDelivered: number;
-    @property({type: Array}) protected guildUpgrades: number[] = [];
+    @property() private objectiveData;
 
     public stateChanged(state) {
         super.stateChanged(state);
@@ -58,26 +58,6 @@ export class Gw2Info extends BaseElement {
         }
     }
 
-    public getObjective(state) {
-        return state.match.matchData.maps.reduce((objective, map) => {
-            if (objective) {
-                return objective;
-            }
-            return map.objectives.reduce((found, obj) => {
-                return obj.id === this.objectiveId ? obj : found;
-            }, null);
-        }, null);
-    }
-
-    public renderDataEntries() {
-        return [
-            html`<dt>${this.t('Turned')}</dt><dd>${this.lastFlipped.toLocaleTimeString()}</dd>`,
-            html`<dt>${this.t('Guild')}</dt><dd><gw2-guild-name .guildId=${this.claimedBy}></gw2-guild-name></dd>`,
-            html`<dt>${this.t('Claimed')}</dt><dd>${this.claimedAt.toLocaleTimeString()}</dd>`,
-            html`<dt>${this.t('Dolyaks')}</dt><dd>${this.yaksDelivered}</dd>`
-        ];
-    }
-
     protected render() {
         return html`<b>${this.objectiveData.name}</b>
         <dl>${this.renderDataEntries()}</dl>`;
@@ -95,6 +75,45 @@ export class Gw2Info extends BaseElement {
                     this.claimedBy, this.claimedAt.toISOString()
                 ));
         }
+    }
+
+    private renderDataEntries() {
+        const infos = [html`<dt>${this.t('Turned')}</dt><dd>${this.lastFlipped.toLocaleTimeString()}</dd>`];
+
+        if (this.claimedBy) {
+            infos.push(
+                html`<dt>${this.t('Guild')}</dt><dd><gw2-guild-name .guildId=${this.claimedBy}></gw2-guild-name></dd>`,
+                html`<dt>${this.t('Claimed')}</dt><dd>${this.claimedAt.toLocaleTimeString()}</dd>`
+            );
+        }
+
+        if (this.yaksDelivered < 140) {
+            infos.push(html`<dt>${this.t('Dolyaks')}</dt><dd>${this.getDolyaks()}</dd>`);
+        }
+
+        return infos;
+    }
+
+    private getDolyaks() {
+        if (this.yaksDelivered < 20) {
+            return this.yaksDelivered + ' / 20';
+        } else if (this.yaksDelivered < 60) {
+            return (this.yaksDelivered - 20) + ' / 40';
+        } else if (this.yaksDelivered < 140) {
+            return (this.yaksDelivered - 60) + ' / 80';
+        }
+        return '';
+    }
+
+    private getObjective(state) {
+        return state.match.matchData.maps.reduce((objective, map) => {
+            if (objective) {
+                return objective;
+            }
+            return map.objectives.reduce((found, obj) => {
+                return obj.id === this.objectiveId ? obj : found;
+            }, null);
+        }, null);
     }
 
     private updateGuildUpgrades(objUpgrades) {

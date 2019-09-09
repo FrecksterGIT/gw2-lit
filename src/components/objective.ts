@@ -67,13 +67,12 @@ export class Gw2Objective extends BaseElement {
         ];
     }
 
-    @property({type: String}) public objectiveId: string;
-
-    @property() public objectiveData;
-    @property() public coords = [0, 0];
-    @property({type: String}) public type: string;
-    @property({type: String}) public owner: string;
-    @property({type: String}) public lastFlipped: string;
+    @property({type: String}) private objectiveId: string;
+    @property({type: String}) private type: string;
+    @property({type: String}) private owner: string;
+    @property({type: String}) private lastFlipped: string;
+    @property() private objectiveData;
+    @property() private coords: number[] = [0, 0];
 
     public stateChanged(state) {
         super.stateChanged(state);

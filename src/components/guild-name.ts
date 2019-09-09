@@ -8,9 +8,9 @@ import {BaseElement} from './base';
 @customElement('gw2-guild-name')
 export class GuildName extends BaseElement {
 
-    @property({type: String}) protected guildId: string = '';
-    @property({type: Object}) protected guildData: any = {};
-    @property({type: String}) protected color: string = '';
+    @property({type: String}) private guildId: string = '';
+    @property({type: Object}) private guildData: any = {};
+    @property({type: String}) private color: string = '';
 
     public static get styles() {
         return [

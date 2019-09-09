@@ -5,9 +5,9 @@ import './objective';
 
 @customElement('gw2-map')
 export class Gw2Map extends BaseElement {
-    @property({type: Number}) public mapId: number;
-    @property({type: String}) public type: string;
-    @property({type: Array}) public objectives: number[] = [];
+    @property({type: Number}) private mapId: number;
+    @property({type: String}) private type: string;
+    @property({type: Array}) private objectives: number[] = [];
 
     public static get MAP_SIZES() {
         return {
