@@ -1,7 +1,8 @@
+import {differenceInSeconds} from 'date-fns';
 import {css, customElement, html, property, unsafeCSS} from 'lit-element';
 import {BaseElement} from './base';
 
-import {logChange, OWNER} from '../store/actions/logger';
+import {CLAIM, logChange, OWNER} from '../store/actions/logger';
 import {store} from '../store/store';
 
 import './info';
@@ -17,6 +18,9 @@ export class Gw2Objective extends BaseElement {
 
     static get styles() {
         return [
+            css`:host {
+                font: 11px/13px 'Open Sans', sans-serif, arial;
+            }`,
             css`:host .objective {
                 background-color: #707070;
                 border-radius: 50%;
@@ -58,11 +62,12 @@ export class Gw2Objective extends BaseElement {
             css`:host .red {
                 background-image: radial-gradient(circle at 50%, #BA7471, #b02822 53%);
             }`,
-            css`:host .info {
-                display: none;
-            }`,
-            css`:host .objective:hover .info {
-                display: block;
+            css`:host .timer {
+                bottom: -14px;
+                color: #fff;
+                position: absolute;
+                text-shadow: 0 -1px #000000, 1px 0 #000000, 0 1px #000000, -1px 0 #000000, 0 -1px 2px #000000, 1px 0 2px #000000, 0 1px 2px #000000, -1px 0 2px #000000, 0 -1px 2px #000000, 1px 0 2px #000000, 0 1px 2px #000000, -1px 0 2px #000000;
+                z-index: 1;
             }`
         ];
     }
@@ -70,37 +75,40 @@ export class Gw2Objective extends BaseElement {
     @property({type: String}) private objectiveId: string;
     @property({type: String}) private type: string;
     @property({type: String}) private owner: string;
-    @property({type: String}) private lastFlipped: string;
+    @property({type: Date}) private lastFlipped: Date;
+    @property({type: String}) private claimedBy: string;
+    @property({type: Date}) private claimedAt: Date;
+
     @property() private objectiveData;
     @property() private coords: number[] = [0, 0];
 
+    @property({type: Boolean}) private showInfo: boolean = false;
+
+    @property() private protectedTimerOutput: string = '';
+    private protectedTimerInterval;
+
     public stateChanged(state) {
         super.stateChanged(state);
+
         if (state.match.matchData) {
             const objective = this.getObjective(state);
 
             this.type = objective.type;
             this.owner = objective.owner;
-            this.lastFlipped = objective.last_flipped;
+            this.lastFlipped = new Date(objective.last_flipped);
+            this.claimedBy = objective.claimed_by;
+            this.claimedAt = new Date(objective.claimed_at);
         }
+
         if (state.resources.OBJECTIVES && state.resources.OBJECTIVES[this.objectiveId]) {
             this.objectiveData = state.resources.OBJECTIVES[this.objectiveId];
             this.coords = this.calculateCoords();
         }
     }
 
-    protected render() {
-        const iconClass = this.type ? this.type.toLowerCase() : '';
-        const ownerClass = this.owner ? this.owner.toLowerCase() : '';
-
-        return html`<div class="objective ${ownerClass}" style="left: ${this.coords[0]}%; top: ${this.coords[1]}%">
-            <div class="icon ${iconClass}"></div>
-            <gw2-info class="info" objectiveId=${this.objectiveId}></gw2-info>
-        </div>`;
-    }
-
     protected updated(changedProperties: Map<PropertyKey, unknown>): void {
         super.updated(changedProperties);
+
         if (changedProperties.has('owner')) {
             store.dispatch(
                 logChange(
@@ -109,9 +117,65 @@ export class Gw2Objective extends BaseElement {
                     this.owner,
                     changedProperties.get('owner') as string,
                     this.owner,
-                    this.lastFlipped
+                    this.lastFlipped.toISOString()
                 ));
         }
+
+        if (changedProperties.has('claimedBy') && this.claimedBy) {
+            store.dispatch(
+                logChange(
+                    CLAIM,
+                    this.objectiveData,
+                    this.owner,
+                    changedProperties.get('claimedBy') as string,
+                    this.claimedBy,
+                    this.claimedAt.toISOString()
+                ));
+        }
+
+        if (changedProperties.has('owner')) {
+            this.protectedTimerInterval = window.setInterval(() => this.updateTimer.call(this), 1000);
+        }
+    }
+
+    protected render() {
+        const iconClass = this.type ? this.type.toLowerCase() : '';
+        const ownerClass = this.owner ? this.owner.toLowerCase() : '';
+
+        return html`<div 
+                class="objective ${ownerClass}" 
+                style="left: ${this.coords[0]}%; top: ${this.coords[1]}%"
+                @mouseenter=${() => (this.showInfo = true)}
+                @mouseleave=${() => (this.showInfo = false)}>
+            <div class="icon ${iconClass}"></div>
+            ${this.protectedTimerOutput ? html`<div class="timer">${this.protectedTimerOutput}</div>` : html``}
+            ${this.showInfo ? html`<gw2-info class="info" objectiveId=${this.objectiveId}></gw2-info>` : html``}
+        </div>`;
+    }
+
+    private updateTimer() {
+        const diff = 300 - differenceInSeconds(new Date(), this.lastFlipped);
+
+        if (diff <= 0) {
+            window.clearInterval(this.protectedTimerInterval);
+            this.protectedTimerOutput = '';
+        } else {
+            this.protectedTimerOutput = this.formatTime(diff);
+        }
+    }
+
+    private formatTime(secNum) {
+        const hours: number | string = Math.floor(secNum / 3600);
+        let minutes: number | string = Math.floor((secNum - hours * 3600) / 60);
+        let seconds: number | string = secNum - hours * 3600 - minutes * 60;
+
+        if (minutes < 10) {
+            minutes = '0' + minutes;
+        }
+        if (seconds < 10) {
+            seconds = '0' + seconds;
+        }
+        return minutes + ':' + seconds;
     }
 
     private getObjective(state) {

@@ -15,6 +15,12 @@ class WvW extends BaseElement {
 
     public static get styles() {
         return [
+            css`:host {
+                display: block;
+                margin: 0 auto;
+                max-width: 1080px;
+                min-width: 810px;
+            }`,
             css`:host .infos {
                 align-content: space-between;
                 display: flex;

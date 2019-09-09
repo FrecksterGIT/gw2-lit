@@ -1,9 +1,7 @@
+import {differenceInSeconds} from 'date-fns';
 import {css, customElement, html, property} from 'lit-element';
 
 import {BaseElement} from './base';
-
-import {CLAIM, logChange} from '../store/actions/logger';
-import {store} from '../store/store';
 
 import './guild-name';
 
@@ -17,6 +15,7 @@ export class Gw2Info extends BaseElement {
                 border: 1px solid #000;
                 border-radius: 4px;
                 color: #e1e1e1;
+                display: block;
                 font: 11px/13px 'Open Sans', sans-serif, arial;
                 left: 40px;
                 padding: 6px 11px;
@@ -39,6 +38,16 @@ export class Gw2Info extends BaseElement {
 
     @property() private objectiveData;
 
+    private timerUpdateInterval;
+    @property({type: String}) private claimedAtOutput: string = '';
+    @property({type: String}) private lastFlippedOutput: string = '';
+
+    public disconnectedCallback(): void {
+        if (this.timerUpdateInterval) {
+            clearInterval(this.timerUpdateInterval);
+        }
+    }
+
     public stateChanged(state) {
         super.stateChanged(state);
         if (state.match.matchData) {
@@ -58,39 +67,34 @@ export class Gw2Info extends BaseElement {
         }
     }
 
+    protected firstUpdated(changedProperties: Map<PropertyKey, unknown>): void {
+        this.updateTimers();
+        this.timerUpdateInterval = window.setInterval(() => this.updateTimers.call(this), 1000);
+    }
+
     protected render() {
         return html`<b>${this.objectiveData.name}</b>
         <dl>${this.renderDataEntries()}</dl>`;
     }
 
-    protected updated(changedProperties: Map<PropertyKey, unknown>): void {
-        super.updated(changedProperties);
-        if (changedProperties.has('claimedBy') && this.claimedBy) {
-            store.dispatch(
-                logChange(
-                    CLAIM,
-                    this.objectiveData,
-                    this.owner,
-                    changedProperties.get('claimedBy') as string,
-                    this.claimedBy, this.claimedAt.toISOString()
-                ));
-        }
+    private updateTimers() {
+        this.lastFlippedOutput = this.formatTime(this.lastFlipped);
+        this.claimedAtOutput = this.claimedAt ? this.formatTime(this.claimedAt) : '';
     }
 
     private renderDataEntries() {
-        const infos = [html`<dt>${this.t('Turned')}</dt><dd>${this.lastFlipped.toLocaleTimeString()}</dd>`];
+        const infos = [html`<dt>${this.t('Turned')}</dt><dd>${this.lastFlippedOutput}</dd>`];
 
         if (this.claimedBy) {
             infos.push(
                 html`<dt>${this.t('Guild')}</dt><dd><gw2-guild-name .guildId=${this.claimedBy}></gw2-guild-name></dd>`,
-                html`<dt>${this.t('Claimed')}</dt><dd>${this.claimedAt.toLocaleTimeString()}</dd>`
+                html`<dt>${this.t('Claimed')}</dt><dd>${this.claimedAtOutput}</dd>`
             );
         }
 
         if (this.yaksDelivered < 140) {
             infos.push(html`<dt>${this.t('Dolyaks')}</dt><dd>${this.getDolyaks()}</dd>`);
         }
-
         return infos;
     }
 
@@ -103,6 +107,35 @@ export class Gw2Info extends BaseElement {
             return (this.yaksDelivered - 60) + ' / 80';
         }
         return '';
+    }
+
+    private formatTime(timeToFormat) {
+        let secNum = differenceInSeconds(new Date(), timeToFormat);
+        let time = '-';
+        if (secNum) {
+            const days = Math.floor(secNum / 86400);
+            secNum -= days * 86400;
+            let hours: number | string = Math.floor(secNum / 3600);
+            secNum -= hours * 3600;
+            let minutes: number | string = Math.floor(secNum / 60);
+            secNum -= minutes * 60;
+            let seconds: number | string = secNum;
+
+            if (hours < 10) {
+                hours = '0' + hours;
+            }
+            if (minutes < 10) {
+                minutes = '0' + minutes;
+            }
+            if (seconds < 10) {
+                seconds = '0' + seconds;
+            }
+            time = (days > 0 ? days + 'd ' : '');
+            time += (hours > 0 || days > 0 ? hours + 'h ' : '');
+            time += (minutes > 0 || hours > 0 || days > 0 ? minutes + 'm ' : '');
+            time += seconds + 's';
+        }
+        return time;
     }
 
     private getObjective(state) {
