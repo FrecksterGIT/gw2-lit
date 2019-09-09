@@ -5,7 +5,7 @@ export const REQUEST = 'REQUEST';
 export const RECEIVED = 'RECEIVED';
 export const FAILED = 'FAILED';
 
-type DataType = 'OBJECTIVES' | 'WORLDS';
+type DataType = 'MATCHES' | 'OBJECTIVES' | 'WORLDS';
 
 export interface IResourcesState {
     data?: any;
@@ -70,4 +70,8 @@ export const fetchObjectives = (): ThunkAction<Promise<any>, IResourcesState, nu
 
 export const fetchWorlds = (): ThunkAction<Promise<any>, IResourcesState, null, null> => {
     return fetchData('https://api.guildwars2.com/v2/worlds?ids=all', 'WORLDS');
+};
+
+export const fetchMatches = (): ThunkAction<Promise<any>, IResourcesState, null, null> => {
+    return fetchData('https://api.guildwars2.com/v2/wvw/matches/overview?ids=all', 'MATCHES');
 };

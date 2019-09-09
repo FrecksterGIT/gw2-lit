@@ -70,7 +70,7 @@ export class Gw2Objective extends BaseElement {
     @property({type: String}) public objectiveId: string;
 
     @property() public objectiveData;
-    @property() public coords;
+    @property() public coords = [0, 0];
     @property({type: String}) public type: string;
     @property({type: String}) public owner: string;
     @property({type: String}) public lastFlipped: string;

@@ -1,6 +1,7 @@
 import {FAILED, RECEIVED, REQUEST} from '../actions/resources';
 
 const INITIAL_STATE = {
+    MATCHES: [],
     OBJECTIVES: [],
     WORLDS: [],
     fetching: false

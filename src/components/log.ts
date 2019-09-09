@@ -34,10 +34,10 @@ export class Gw2Info extends BaseElement {
         switch (message.type) {
             case OWNER:
                 return html`<p>${this.formatDateRelativeToNow(message.time)}:
-                    ${message.objectiveName}: ${message.oldValue} ${this.t('captured by')} ${message.newValue}</p>`;
+                    ${message.objectiveName} ${message.oldValue} ${this.t('captured by')} ${message.newValue}</p>`;
             case CLAIM:
                 return html`<p>${this.formatDateRelativeToNow(message.time)}:
-                    ${message.objectiveName}: ${message.oldValue} ${this.t('claimed by')} ${message.newValue}</p>`;
+                    ${message.objectiveName} ${message.oldValue} ${this.t('claimed by')} ${message.newValue}</p>`;
         }
     }
 }

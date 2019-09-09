@@ -3,7 +3,6 @@ import {css, customElement, html, unsafeCSS} from 'lit-element';
 import {BaseElement} from './base';
 
 import {fetchUpdate} from '../store/actions/match';
-import {fetchObjectives, fetchWorlds} from '../store/actions/resources';
 import {store} from '../store/store';
 
 import './map';
@@ -30,8 +29,6 @@ export class World extends BaseElement {
     protected firstUpdated(changedProperties: Map<PropertyKey, unknown>): void {
         super.firstUpdated(changedProperties);
         store.dispatch<any>(fetchUpdate('2-4'));
-        store.dispatch<any>(fetchObjectives());
-        store.dispatch<any>(fetchWorlds());
         setInterval(() => {
             store.dispatch<any>(fetchUpdate('2-4'));
         }, 5000);
