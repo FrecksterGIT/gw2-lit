@@ -13,6 +13,12 @@ import * as castleIcon from '../../assets/images/gw2_wvw_map-vector--castle_tran
 import * as keepIcon from '../../assets/images/gw2_wvw_map-vector--keep_transparent.svg';
 import * as towerIcon from '../../assets/images/gw2_wvw_map-vector--tower_transparent.svg';
 
+import * as claimed from '../../assets/images/claimed.png';
+import * as tier1 from '../../assets/images/tier_1.png';
+import * as tier2 from '../../assets/images/tier_2.png';
+import * as tier3 from '../../assets/images/tier_3.png';
+import * as waypoint from '../../assets/images/waypoint.png';
+
 @customElement('gw2-objective')
 export class Gw2Objective extends BaseElement {
 
@@ -68,6 +74,47 @@ export class Gw2Objective extends BaseElement {
                 position: absolute;
                 text-shadow: 0 -1px #000000, 1px 0 #000000, 0 1px #000000, -1px 0 #000000, 0 -1px 2px #000000, 1px 0 2px #000000, 0 1px 2px #000000, -1px 0 2px #000000, 0 -1px 2px #000000, 1px 0 2px #000000, 0 1px 2px #000000, -1px 0 2px #000000;
                 z-index: 1;
+            }`,
+            css`:host .tier {
+                background-size: contain;
+                background-repeat: no-repeat;
+                display: block;
+                height: 12px;
+                left: 1px;
+                position: absolute;
+                top: -5px;
+                width: 24px;
+            }`,
+            css`:host .tier--1 {
+                background-image: url(${unsafeCSS(tier1)})
+            }`,
+            css`:host .tier--2 {
+                background-image: url(${unsafeCSS(tier2)})
+            }`,
+            css`:host .tier--3 {
+                background-image: url(${unsafeCSS(tier3)})
+            }`,
+            css`:host .waypoint {
+                background-image: url(${unsafeCSS(waypoint)});
+                background-size: contain;
+                background-repeat: no-repeat;
+                bottom: -5px;
+                display: block;
+                height: 18px;
+                right: -7px;
+                position: absolute;
+                width: 18px;
+            }`,
+            css`:host .claimed {
+                background-image: url(${unsafeCSS(claimed)});
+                background-size: contain;
+                background-repeat: no-repeat;
+                bottom: -2px;
+                display: block;
+                height: 13px;
+                left: -4px;
+                position: absolute;
+                width: 13px;
             }`
         ];
     }
@@ -83,6 +130,7 @@ export class Gw2Objective extends BaseElement {
     @property() private coords: number[] = [0, 0];
 
     @property({type: Boolean}) private showInfo: boolean = false;
+    @property({type: Number}) private tier: number;
 
     @property() private protectedTimerOutput: string = '';
     private protectedTimerInterval;
@@ -98,6 +146,13 @@ export class Gw2Objective extends BaseElement {
             this.lastFlipped = new Date(objective.last_flipped);
             this.claimedBy = objective.claimed_by;
             this.claimedAt = new Date(objective.claimed_at);
+            this.tier = objective.yaks_delivered >= 140
+                ? 3
+                : objective.yaks_delivered >= 60
+                    ? 2
+                    : objective.yaks_delivered >= 20
+                        ? 1
+                        : 0;
         }
 
         if (state.resources.OBJECTIVES && state.resources.OBJECTIVES[this.objectiveId]) {
@@ -150,6 +205,9 @@ export class Gw2Objective extends BaseElement {
             <div class="icon ${iconClass}"></div>
             ${this.protectedTimerOutput ? html`<div class="timer">${this.protectedTimerOutput}</div>` : html``}
             ${this.showInfo ? html`<gw2-info class="info" objectiveId=${this.objectiveId}></gw2-info>` : html``}
+            ${this.tier ? html`<span class="tier tier--${this.tier}"></span>` : html``}
+            ${this.tier === 3 ? html`<span class="waypoint"></span>` : html``}
+            ${this.claimedBy ? html`<span class="claimed"></span>` : html``}
         </div>`;
     }
 
