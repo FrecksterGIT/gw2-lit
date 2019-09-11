@@ -188,7 +188,7 @@ export class Gw2Objective extends BaseElement {
                 ));
         }
 
-        if (changedProperties.has('owner')) {
+        if (changedProperties.has('lastFlipped')) {
             this.protectedTimerInterval = window.setInterval(() => this.updateTimer.call(this), 1000);
         }
     }
