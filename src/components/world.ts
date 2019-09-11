@@ -2,9 +2,6 @@ import {css, customElement, html, unsafeCSS} from 'lit-element';
 
 import {BaseElement} from './base';
 
-import {fetchUpdate} from '../store/actions/match';
-import {store} from '../store/store';
-
 import './map';
 
 import * as background from '../../assets/images/world.jpg';
@@ -24,14 +21,6 @@ export class World extends BaseElement {
                 position: relative;
                 width: 100%;
             }`];
-    }
-
-    protected firstUpdated(changedProperties: Map<PropertyKey, unknown>): void {
-        super.firstUpdated(changedProperties);
-        store.dispatch<any>(fetchUpdate('2-3'));
-        setInterval(() => {
-            store.dispatch<any>(fetchUpdate('2-3'));
-        }, 5000);
     }
 
     protected render() {

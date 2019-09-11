@@ -21,7 +21,7 @@ export class Gw2Info extends BaseElement {
                 font: 11px/13px 'Open Sans', sans-serif, arial;
                 height: 120px;
                 overflow-y: scroll;
-                width: calc(50% - 5px);
+                width: calc(50% - 8px);
             }`,
             css`:host .red {
                 color: #b02822;

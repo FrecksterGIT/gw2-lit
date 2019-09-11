@@ -1,6 +1,8 @@
-import {FAILED_UPDATE, RECEIVED_UPDATE, REQUEST_UPDATE} from '../actions/match';
+import {FAILED_UPDATE, MATCH_ID, RECEIVED_UPDATE, REQUEST_UPDATE} from '../actions/match';
 
-const INITIAL_STATE = {};
+const INITIAL_STATE = {
+    fetching: false
+};
 
 export default (state = INITIAL_STATE, action) => {
     switch (action.type) {
@@ -21,6 +23,12 @@ export default (state = INITIAL_STATE, action) => {
                 error: action.error,
                 fetching: false
             };
+        case MATCH_ID: {
+            return {
+                ...INITIAL_STATE,
+                matchId: action.matchId
+            };
+        }
         default:
             return state;
     }

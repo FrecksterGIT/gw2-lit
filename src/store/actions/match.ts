@@ -4,6 +4,7 @@ import {ThunkAction, ThunkDispatch} from 'redux-thunk';
 export const REQUEST_UPDATE = 'REQUEST_UPDATE';
 export const RECEIVED_UPDATE = 'RECEIVED_UPDATE';
 export const FAILED_UPDATE = 'FAILED_UPDATE';
+export const MATCH_ID = 'MATCH_ID';
 
 export interface IMatchState {
     fetching?: boolean;
@@ -50,6 +51,13 @@ const failedUpdate = (matchId: string, error: any): IFailedAction => {
         error,
         matchId,
         type: FAILED_UPDATE
+    };
+};
+
+export const changeMatch = (matchId) => {
+    return {
+        matchId,
+        type: MATCH_ID
     };
 };
 

@@ -36,7 +36,7 @@ export class MatchOverview extends BaseElement {
                 display: block;
                 flex: 0 0 auto;
                 font: 11px/13px 'Open Sans', sans-serif, arial;
-                width: calc(50% - 5px);
+                width: calc(50% - 8px);
             }`,
             css`:host .worlds {
                 position: relative;

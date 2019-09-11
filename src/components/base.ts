@@ -57,8 +57,7 @@ export class BaseElement extends connect(store)(LitElement) {
                     }
                 }
             }).then(() => {
-                // tslint:disable-next-line
-                console.log('i18n initialized');
+                // noop
             });
         }
     }
