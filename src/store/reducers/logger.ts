@@ -1,4 +1,4 @@
-import {CLAIM, OWNER} from '../actions/logger';
+import {CLAIM, CLEAR, OWNER} from '../actions/logger';
 
 interface IMessage {
     action: 'OWNER' | 'CLAIM';
@@ -28,6 +28,11 @@ export default (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 messages
+            };
+        case CLEAR:
+            return {
+                ...state,
+                messages: []
             };
         default:
             return state;

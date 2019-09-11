@@ -64,6 +64,24 @@ export class MatchOverview extends BaseElement {
             }`,
             css`:host .green {
                 color: #1e7b2d;
+            }`,
+            css`:host .row {
+                width: 100px;
+            }`,
+            css`:host .row span {
+                border-radius: 4px;
+                display: block;
+                height: 8px;
+                transition: width 1s;
+            }`,
+            css`:host .row .red {
+                background: #b02822;
+            }`,
+            css`:host .row .blue {
+                background: #1a4da1;
+            }`,
+            css`:host .row .green {
+                background: #1e7b2d;
             }`
         ];
     }
@@ -93,7 +111,8 @@ export class MatchOverview extends BaseElement {
             <tr>
                 <th>${this.t('World')}</th>
                 <th>${this.t('Income')}</th>
-                <th>${this.t('Points')}</th>
+                <th rowspan="4"></th>
+                <th colspan="2">${this.t('Points')}</th>
                 <th colspan="2">${this.t('Victory Points')}</th>
             </tr>
             <tr>${this.renderWorldData('green')}</tr>
@@ -106,9 +125,12 @@ export class MatchOverview extends BaseElement {
         const maxVictoryPoints = Math.max(this.victoryPoints.green, this.victoryPoints.blue, this.victoryPoints.red);
         const diffVictoryPoints = this.victoryPoints[color] - maxVictoryPoints;
 
+        const maxScores = Math.max(this.skirmishScores.green, this.skirmishScores.blue, this.skirmishScores.red);
+
         return html`<td>${this.renderLinkedWorlds(color)}</td>
             <td>${this.getIncome(color)}</td>
             <td>${this.skirmishScores[color]}</td>
+            <td class="row"><span class="${color}" style="width: ${this.skirmishScores[color] / maxScores * 100}%"></span></td>
             <td>${this.victoryPoints[color]}</td>
             <td>${diffVictoryPoints < 0 ? diffVictoryPoints : ''}</td>`;
     }

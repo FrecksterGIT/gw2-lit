@@ -1,4 +1,5 @@
 import {css, customElement, html, property, unsafeCSS} from 'lit-element';
+import {clearLog} from '../store/actions/logger';
 import {changeMatch} from '../store/actions/match';
 import {store} from '../store/store';
 
@@ -72,7 +73,7 @@ export class MatchSelector extends BaseElement {
         if (this.matchesData) {
             return Object.keys(this.matchesData).map((matchId) => {
                 const matchData = this.matchesData[matchId];
-                return html`<div @click="${() => (store.dispatch(changeMatch(matchId)) && (this.showSelector = false))}">
+                return html`<div @click="${() => (store.dispatch(clearLog()) && store.dispatch(changeMatch(matchId)) && (this.showSelector = false))}">
                         ${this.renderLinkedWorlds(matchData, 'green')}
                         ${this.renderLinkedWorlds(matchData, 'blue')}
                         ${this.renderLinkedWorlds(matchData, 'red')}

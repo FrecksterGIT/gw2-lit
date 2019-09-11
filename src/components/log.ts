@@ -67,7 +67,7 @@ export class Gw2Info extends BaseElement {
                     <span class="${message.newValue.toLowerCase()}">${message.objectiveName}</span> ${message.oldValue} ${this.t('captured by')} ${newOwner}${oldOwner}</p>`;
             case CLAIM:
                 return html`<p>${this.formatDateRelativeToNow(message.time)}:
-                    <span class="${message.owner.toLowerCase()}">${message.objectiveName}</span> ${message.oldValue} ${this.t('claimed by')} <gw2-guild-name .guildId=${message.newValue} .color=${message.owner}></gw2-guild-name></p>`;
+                    <span class="${message.owner.toLowerCase()}">${message.objectiveName}</span> ${this.t('claimed by')} <gw2-guild-name .guildId=${message.newValue} .color=${message.owner}></gw2-guild-name></p>`;
         }
     }
 
