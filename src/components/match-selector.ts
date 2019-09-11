@@ -72,7 +72,7 @@ export class MatchSelector extends BaseElement {
         if (this.matchesData) {
             return Object.keys(this.matchesData).map((matchId) => {
                 const matchData = this.matchesData[matchId];
-                return html`<div @click="${() => store.dispatch(changeMatch(matchId))}">
+                return html`<div @click="${() => (store.dispatch(changeMatch(matchId)) && (this.showSelector = false))}">
                         ${this.renderLinkedWorlds(matchData, 'green')}
                         ${this.renderLinkedWorlds(matchData, 'blue')}
                         ${this.renderLinkedWorlds(matchData, 'red')}

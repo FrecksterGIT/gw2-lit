@@ -29,6 +29,7 @@ export class MatchOverview extends BaseElement {
     };
 
     @property() private worldData = {};
+    @property() private matchData;
 
     static get styles() {
         return [
@@ -72,6 +73,7 @@ export class MatchOverview extends BaseElement {
         if (state.match.matchData && state.match.matchData.worlds) {
             const skirmish = state.match.matchData.skirmishes[state.match.matchData.skirmishes.length - 1];
 
+            this.matchData = state.match.matchData;
             this.worlds = state.match.matchData.worlds;
             this.allWorlds = state.match.matchData.all_worlds;
             this.victoryPoints = state.match.matchData.victory_points;
@@ -88,6 +90,12 @@ export class MatchOverview extends BaseElement {
 
     private renderWorlds() {
         return html`<table>
+            <tr>
+                <th>${this.t('World')}</th>
+                <th>${this.t('Income')}</th>
+                <th>${this.t('Points')}</th>
+                <th colspan="2">${this.t('Victory Points')}</th>
+            </tr>
             <tr>${this.renderWorldData('green')}</tr>
             <tr>${this.renderWorldData('blue')}</tr>
             <tr>${this.renderWorldData('red')}</tr>
@@ -95,9 +103,14 @@ export class MatchOverview extends BaseElement {
     }
 
     private renderWorldData(color) {
+        const maxVictoryPoints = Math.max(this.victoryPoints.green, this.victoryPoints.blue, this.victoryPoints.red);
+        const diffVictoryPoints = this.victoryPoints[color] - maxVictoryPoints;
+
         return html`<td>${this.renderLinkedWorlds(color)}</td>
+            <td>${this.getIncome(color)}</td>
             <td>${this.skirmishScores[color]}</td>
-            <td>${this.victoryPoints[color]}</td>`;
+            <td>${this.victoryPoints[color]}</td>
+            <td>${diffVictoryPoints < 0 ? diffVictoryPoints : ''}</td>`;
     }
 
     private renderLinkedWorlds(color) {
@@ -113,5 +126,19 @@ export class MatchOverview extends BaseElement {
 
     private getWorldName(id: number) {
         return (this.worldData && this.worldData[id]) ? this.worldData[id].name : id;
+    }
+
+    private getIncome(color: string): number {
+        if (this.matchData && this.matchData.maps) {
+            return this.matchData.maps.reduce((income, map) => {
+                return map.objectives.reduce((sum, objective) => {
+                    if (objective.owner.toLowerCase() === color) {
+                        return sum + objective.points_tick;
+                    }
+                    return sum;
+                }, income);
+            }, 0);
+        }
+        return 0;
     }
 }
