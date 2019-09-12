@@ -46,15 +46,16 @@ export class MatchOverview extends BaseElement {
                 background: #fff;
                 border: 1px solid #e1e1e1;
                 display: none;
+                flex-flow: row nowrap;
                 left: 50px;
                 padding: 2px;
                 position: absolute;
                 top: -3px;
-                width: 200px;
+                white-space: nowrap;
                 z-index: 2;
             }`,
             css`:host .worlds:hover .linked {
-                display: block;
+                display: flex;
             }`,
             css`:host .red {
                 color: #b02822;
@@ -142,7 +143,7 @@ export class MatchOverview extends BaseElement {
 
         return html`<span class="worlds ${color}">
                 ${this.getWorldName(mainWorld)}
-                ${worlds.length ? html`<span class="linked">${worlds.map((world) => this.getWorldName(world))}</span>` : ''}
+                ${worlds.length ? html`<span class="linked">${worlds.map((world) => this.getWorldName(world)).join(', ')}</span>` : ''}
             </span>`;
     }
 
