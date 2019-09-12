@@ -4,6 +4,7 @@ import {css, customElement, html, property} from 'lit-element';
 import {BaseElement} from './base';
 
 import './guild-name';
+import './guild-upgrades';
 
 @customElement('gw2-info')
 export class Gw2Info extends BaseElement {
@@ -21,7 +22,7 @@ export class Gw2Info extends BaseElement {
                 padding: 6px 11px;
                 position: relative;
                 top: 0;
-                width: 170px;
+                width: 222px;
             }`
         ];
     }
@@ -74,7 +75,8 @@ export class Gw2Info extends BaseElement {
 
     protected render() {
         return html`<b>${this.objectiveData.name}</b>
-        <dl>${this.renderDataEntries()}</dl>`;
+        <dl>${this.renderDataEntries()}</dl>
+        ${this.guildUpgrades ? html`<gw2-guild-upgrades .upgrades=${this.guildUpgrades}></gw2-guild-upgrades>` : html``}`;
     }
 
     private updateTimers() {

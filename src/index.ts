@@ -5,7 +5,7 @@ import {BaseElement} from './components/base';
 
 import {changeLanguage} from './store/actions/i18n';
 import {changeMatch, fetchUpdate} from './store/actions/match';
-import {fetchMatches, fetchObjectives, fetchWorlds} from './store/actions/resources';
+import {fetchMatches, fetchObjectives, fetchUpgrades, fetchWorlds} from './store/actions/resources';
 import {store} from './store/store';
 
 import './components/log';
@@ -70,6 +70,7 @@ class WvW extends BaseElement {
         if (changedProperties.has('lng')) {
             store.dispatch<any>(fetchObjectives(this.lng));
             store.dispatch<any>(fetchWorlds(this.lng));
+            store.dispatch<any>(fetchUpgrades(this.lng));
 
             Cookies.set('lng', this.lng);
         }

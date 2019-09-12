@@ -7,12 +7,13 @@ export const REQUEST = 'REQUEST';
 export const RECEIVED = 'RECEIVED';
 export const FAILED = 'FAILED';
 
-type DataType = 'MATCHES' | 'OBJECTIVES' | 'WORLDS' | 'GUILDS';
+type DataType = 'MATCHES' | 'OBJECTIVES' | 'WORLDS' | 'GUILDS' | 'UPGRADES';
 
 export interface IResourcesState {
     GUILDS: [];
     MATCHES: [];
     OBJECTIVES: [];
+    UPGRADES: [];
     WORLDS: [];
     fetching?: boolean;
 }
@@ -79,6 +80,10 @@ export const fetchWorlds = (lng = 'en'): ThunkAction<Promise<any>, IResourcesSta
 
 export const fetchMatches = (): ThunkAction<Promise<any>, IResourcesState, null, null> => {
     return fetchData('https://api.guildwars2.com/v2/wvw/matches/overview?ids=all', 'MATCHES');
+};
+
+export const fetchUpgrades = (lng = 'en'): ThunkAction<Promise<any>, IResourcesState, null, null> => {
+    return fetchData('https://api.guildwars2.com/v2/guild/upgrades?ids=all&lang=' + lng, 'UPGRADES');
 };
 
 export const fetchGuild = (guildId): ThunkAction<Promise<any>, IResourcesState, null, null> => {
