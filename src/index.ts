@@ -5,7 +5,7 @@ import {BaseElement} from './components/base';
 
 import {changeLanguage} from './store/actions/i18n';
 import {changeMatch, fetchUpdate} from './store/actions/match';
-import {fetchMatches, fetchObjectives, fetchUpgrades, fetchWorlds} from './store/actions/resources';
+import {fetchObjectives, fetchUpgrades, fetchWorlds} from './store/actions/resources';
 import {store} from './store/store';
 
 import './components/log';
@@ -37,14 +37,6 @@ class WvW extends BaseElement {
         ];
     }
 
-    constructor() {
-        super();
-
-        store.dispatch<any>(fetchObjectives());
-        store.dispatch<any>(fetchWorlds());
-        store.dispatch<any>(fetchMatches());
-    }
-
     public stateChanged(state) {
         super.stateChanged(state);
         if (state.match.matchId) {
@@ -56,11 +48,11 @@ class WvW extends BaseElement {
         const lng = Cookies.get('lng') ? Cookies.get('lng') : 'en';
         const matchId = Cookies.get('match') ? Cookies.get('match') : '2-1';
 
-        if (lng) {
+        if (lng !== this.lng) {
             store.dispatch(changeLanguage(lng));
         }
 
-        if (matchId) {
+        if (matchId !== this.matchId) {
             store.dispatch(changeMatch(matchId));
         }
     }

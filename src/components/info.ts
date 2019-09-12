@@ -23,6 +23,13 @@ export class Gw2Info extends BaseElement {
                 position: relative;
                 top: 0;
                 width: 222px;
+            }`,
+            css`:host([movetoleft="true"]) {
+                left: auto;
+                right: 258px;
+            }`,
+            css`:host([movetotop="true"]) {
+                top: -200px;
             }`
         ];
     }
@@ -37,11 +44,14 @@ export class Gw2Info extends BaseElement {
     @property({type: Number}) private yaksDelivered: number;
     @property({type: Array}) private guildUpgrades: number[] = [];
 
-    @property() private objectiveData;
-
-    private timerUpdateInterval;
     @property({type: String}) private claimedAtOutput: string = '';
     @property({type: String}) private lastFlippedOutput: string = '';
+
+    @property() private objectiveData;
+    @property({type: Boolean}) private moveToLeft = false;
+    @property({type: Boolean}) private moveToTop = false;
+
+    private timerUpdateInterval;
 
     public disconnectedCallback(): void {
         if (this.timerUpdateInterval) {
@@ -71,6 +81,23 @@ export class Gw2Info extends BaseElement {
     protected firstUpdated(changedProperties: Map<PropertyKey, unknown>): void {
         this.updateTimers();
         this.timerUpdateInterval = window.setInterval(() => this.updateTimers.call(this), 1000);
+    }
+
+    protected updated(changedProperties: Map<PropertyKey, unknown>): void {
+        super.updated(changedProperties);
+
+        const clientRect = this.getBoundingClientRect();
+        const mapClientRect = window.document.querySelector('gw2-wvw').getBoundingClientRect();
+
+        if (clientRect.bottom > mapClientRect.bottom) {
+            this.moveToTop = true;
+            this.setAttribute('moveToTop', 'true');
+        }
+
+        if (clientRect.right > mapClientRect.right) {
+            this.moveToLeft = true;
+            this.setAttribute('moveToLeft', 'true');
+        }
     }
 
     protected render() {

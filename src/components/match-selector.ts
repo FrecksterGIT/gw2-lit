@@ -1,6 +1,7 @@
 import {css, customElement, html, property, unsafeCSS} from 'lit-element';
 import {clearLog} from '../store/actions/logger';
 import {changeMatch} from '../store/actions/match';
+import {fetchMatches} from '../store/actions/resources';
 import {store} from '../store/store';
 
 import {BaseElement} from './base';
@@ -55,12 +56,18 @@ export class MatchSelector extends BaseElement {
 
     public stateChanged(state) {
         super.stateChanged(state);
+
         if (state.resources.WORLDS) {
             this.worldData = state.resources.WORLDS;
         }
+
         if (state.resources.MATCHES) {
             this.matchesData = state.resources.MATCHES;
         }
+    }
+
+    protected firstUpdated(changedProperties: Map<PropertyKey, unknown>): void {
+        store.dispatch<any>(fetchMatches());
     }
 
     protected render() {
