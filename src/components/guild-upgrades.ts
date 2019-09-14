@@ -26,7 +26,10 @@ export class GuildUpgrades extends BaseElement {
 
     public stateChanged(state) {
         super.stateChanged(state);
-        this.upgradesData = this.upgrades.map((upgrade) => state.resources.UPGRADES[upgrade]);
+
+        if (state.resources.UPGRADES) {
+            this.upgradesData = this.upgrades.map((upgrade) => state.resources.UPGRADES[upgrade]);
+        }
     }
 
     protected render() {

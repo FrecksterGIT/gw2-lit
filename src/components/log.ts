@@ -23,6 +23,10 @@ export class Gw2Info extends BaseElement {
                 overflow-y: scroll;
                 width: calc(50% - 8px);
             }`,
+            css`:host p {
+                margin: 0;
+                padding: 2px 0;
+            }`,
             css`:host .red {
                 color: #b02822;
             }`,
@@ -39,7 +43,7 @@ export class Gw2Info extends BaseElement {
         super.stateChanged(state);
 
         if (state.logger.messages) {
-            this.messages = state.logger.messages.slice(0, 80);
+            this.messages = state.logger.messages.slice(0, 50);
         }
 
         if (state.match.matchData) {
@@ -61,7 +65,7 @@ export class Gw2Info extends BaseElement {
                 const newOwner = html`<span class="${message.newValue.toLowerCase()}">${this.getWorldName(message.newValue.toLowerCase())}</span>`;
                 const oldOwner = (message.oldValue)
                     ? html` ${this.t('from')} <span class="${message.oldValue.toLowerCase()}">${this.getWorldName(message.oldValue.toLowerCase())}</span>`
-                    : html ``;
+                    : html``;
 
                 return html`<p>${this.formatDateRelativeToNow(message.time)}:
                     <span class="${message.newValue.toLowerCase()}">${message.objectiveName}</span> ${message.oldValue} ${this.t('captured by')} ${newOwner}${oldOwner}</p>`;

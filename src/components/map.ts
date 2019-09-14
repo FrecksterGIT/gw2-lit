@@ -5,9 +5,12 @@ import './objective';
 
 @customElement('gw2-map')
 export class Gw2Map extends BaseElement {
+
     @property({type: Number}) private mapId: number;
     @property({type: String}) private type: string;
     @property({type: Array}) private objectives: number[] = [];
+
+    @property() private mapData;
 
     public static get MAP_SIZES() {
         return {
@@ -53,16 +56,18 @@ export class Gw2Map extends BaseElement {
 
     public stateChanged(state) {
         super.stateChanged(state);
+
         if (state.match.matchData) {
-            const map = state.match.matchData.maps.find((m) => m.id === this.mapId);
-            this.type = map.type;
-            this.objectives = map.objectives
-                .filter((objective) => (
-                    objective.type !== 'Spawn'
-                    && objective.type !== 'Ruins'
-                    && objective.type !== 'Mercenary'
-                ))
-                .map((objective) => objective.id);
+            this.mapData = state.match.matchData.maps.find((m) => m.id === this.mapId);
+        }
+    }
+
+    protected updated(changedProperties: Map<PropertyKey, unknown>): void {
+        super.updated(changedProperties);
+
+        if (changedProperties.has('mapData')) {
+            this.type = this.mapData.type;
+            this.objectives = this.getObjectives();
         }
     }
 
@@ -74,5 +79,15 @@ export class Gw2Map extends BaseElement {
 
     private renderObjective(objId) {
         return html`<gw2-objective objectiveId=${objId}></gw2-objective>`;
+    }
+
+    private getObjectives(): number[] {
+        return this.mapData.objectives
+            .filter((objective) => (
+                objective.type !== 'Spawn'
+                && objective.type !== 'Ruins'
+                && objective.type !== 'Mercenary'
+            ))
+            .map((objective) => objective.id);
     }
 }

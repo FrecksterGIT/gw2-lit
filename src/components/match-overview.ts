@@ -89,17 +89,26 @@ export class MatchOverview extends BaseElement {
 
     public stateChanged(state) {
         super.stateChanged(state);
-        if (state.match.matchData && state.match.matchData.worlds) {
-            const skirmish = state.match.matchData.skirmishes[state.match.matchData.skirmishes.length - 1];
 
+        if (state.match.matchData) {
             this.matchData = state.match.matchData;
-            this.worlds = state.match.matchData.worlds;
-            this.allWorlds = state.match.matchData.all_worlds;
-            this.victoryPoints = state.match.matchData.victory_points;
-            this.skirmishScores = skirmish.scores;
         }
+
         if (state.resources.WORLDS) {
             this.worldData = state.resources.WORLDS;
+        }
+    }
+
+    protected updated(changedProperties: Map<PropertyKey, unknown>): void {
+        super.updated(changedProperties);
+
+        if (changedProperties.has('matchData')) {
+            this.worlds = this.matchData.worlds;
+            this.allWorlds = this.matchData.all_worlds;
+            this.victoryPoints = this.matchData.victory_points;
+
+            const skirmish = this.matchData.skirmishes[this.matchData.skirmishes.length - 1];
+            this.skirmishScores = skirmish.scores;
         }
     }
 

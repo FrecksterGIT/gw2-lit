@@ -61,6 +61,7 @@ export class Gw2Info extends BaseElement {
 
     public stateChanged(state) {
         super.stateChanged(state);
+
         if (state.match.matchData) {
             const objective = this.getObjective(state);
 
@@ -73,6 +74,7 @@ export class Gw2Info extends BaseElement {
             this.yaksDelivered = objective.yaks_delivered;
             this.updateGuildUpgrades(objective.guild_upgrades);
         }
+
         if (state.resources.OBJECTIVES && state.resources.OBJECTIVES[this.objectiveId]) {
             this.objectiveData = state.resources.OBJECTIVES[this.objectiveId];
         }

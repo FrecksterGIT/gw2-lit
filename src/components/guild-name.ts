@@ -28,7 +28,10 @@ export class GuildName extends BaseElement {
 
     public stateChanged(state) {
         super.stateChanged(state);
-        this.guildData = state.resources.GUILDS[this.guildId];
+
+        if (state.resources.GUILDS && state.resources.GUILDS[this.guildId]) {
+            this.guildData = state.resources.GUILDS[this.guildId];
+        }
     }
 
     protected updated(changedProperties: Map<PropertyKey, unknown>): void {
