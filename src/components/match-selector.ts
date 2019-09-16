@@ -11,9 +11,11 @@ import * as globe from '../../assets/images/globe.svg';
 @customElement('gw2-match-selector')
 export class MatchSelector extends BaseElement {
 
+    @property({type: String}) private matchId;
+    @property({type: Boolean}) private showSelector = false;
+
     @property() private matchesData = {};
     @property() private worldData = {};
-    @property({type: Boolean}) private showSelector = false;
 
     static get styles() {
         return [
@@ -70,6 +72,16 @@ export class MatchSelector extends BaseElement {
         store.dispatch<any>(fetchMatches());
     }
 
+    protected updated(changedProperties: Map<PropertyKey, unknown>): void {
+        super.updated(changedProperties);
+
+        if (changedProperties.has('matchId')) {
+            store.dispatch(clearLog());
+            store.dispatch(changeMatch(this.matchId));
+            this.showSelector = false;
+        }
+    }
+
     protected render() {
         return html`
             <button class="open-selector" @click=${() => (this.showSelector = !this.showSelector)}>matches</button>
@@ -80,7 +92,7 @@ export class MatchSelector extends BaseElement {
         if (this.matchesData) {
             return Object.keys(this.matchesData).map((matchId) => {
                 const matchData = this.matchesData[matchId];
-                return html`<div @click="${() => (store.dispatch(clearLog()) && store.dispatch(changeMatch(matchId)) && (this.showSelector = false))}">
+                return html`<div @click="${() => (this.matchId = matchId)}">
                         ${this.renderLinkedWorlds(matchData, 'green')}
                         ${this.renderLinkedWorlds(matchData, 'blue')}
                         ${this.renderLinkedWorlds(matchData, 'red')}

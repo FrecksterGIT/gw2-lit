@@ -1,22 +1,22 @@
 import {isToday} from 'date-fns';
-import i18n from 'i18next';
 import {html, LitElement, property} from 'lit-element';
-import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {connect} from 'pwa-helpers/connect-mixin';
+
+import {store} from '../store/store';
 
 import de from '../locales/de.json';
 import en from '../locales/en.json';
 import es from '../locales/es.json';
 import fr from '../locales/fr.json';
-import {store} from '../store/store';
 
 export class BaseElement extends connect(store)(LitElement) {
 
     @property({type: String}) protected lng: string = 'en';
+    private readonly languages;
 
     constructor() {
         super();
-        this.initI18N();
+        this.languages = {de, en, es, fr};
     }
 
     public stateChanged(state) {
@@ -25,40 +25,17 @@ export class BaseElement extends connect(store)(LitElement) {
 
     protected updated(changedProperties: Map<PropertyKey, unknown>): void {
         if (changedProperties.has('lng')) {
-            i18n.changeLanguage(this.lng).then(() => this.requestUpdate());
-        }
-    }
-
-    protected t(key, options?) {
-        return html`${unsafeHTML(i18n.t(key, options))}`;
-    }
-
-    protected formatDateRelativeToNow(date) {
-        return !isToday(date) ? date.toLocaleString() : date.toLocaleTimeString();
-    }
-
-    private initI18N() {
-        if (!i18n.isInitialized) {
-            const lng = store.getState().i18n.lng;
-            i18n.init({
-                lng,
-                resources: {
-                    de: {
-                        translation: de
-                    },
-                    en: {
-                        translation: en
-                    },
-                    es: {
-                        translation: es
-                    },
-                    fr: {
-                        translation: fr
-                    }
-                }
-            }).then(() => {
+            this.requestUpdate().then(() => {
                 // noop
             });
         }
+    }
+
+    protected t(key) {
+        return html`${this.languages[this.lng][key]}`;
+    }
+
+    protected formatDateByToday(date) {
+        return !isToday(date) ? date.toLocaleString() : date.toLocaleTimeString();
     }
 }
